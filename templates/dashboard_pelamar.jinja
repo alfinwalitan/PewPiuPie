@@ -1,0 +1,30 @@
+{% extends "base_pelamar.jinja" %}
+
+{% block title %}Dashboard - Pelamar{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard_pelamar.css') }}">
+{% endblock %}
+
+{% block content %}
+    <h1>Recruitment Dashboard</h1>
+    <p class='welcome-text'>Welcome Back, {{ user_name }}!</p>
+
+    <h2>Active Jobs Postings</h2>
+    <div class="job-cards">
+        {% for job in jobs %}
+        <div class="job-card">
+            <h4>{{ job.job_title }}</h4>
+            <p><em>Have Skills in {{ job.skills }}</em></p>
+            <p>Min. {{ job.experience }} Years Experience</p>
+
+            <div class="deadline-row">
+                <p class="deadline">Available until: <span>{{ job.deadline }}</span></p>
+                <a href="#" class="view-btn">View Details</a>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

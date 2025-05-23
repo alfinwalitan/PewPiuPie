@@ -1,0 +1,130 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  background: linear-gradient(to right, #0f0f0f 20%, rgba(127, 124, 124, 0.525)),
+              url('City.jpg') no-repeat center center/cover;
+  color: white;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.container {
+  padding: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.nav {
+  display: flex;
+  gap: 20px;
+}
+
+.nav .btn {
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.nav .login {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.nav .signup {
+  background-color: white;
+  color: black;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(12, 92, 242, 0.888);
+}
+
+.btn:active {
+  transform: scale(0.95);
+  box-shadow: none;
+}
+
+
+.main-content{ 
+    margin-left: 60px;
+}
+/* Main left-aligned text content */
+.main-section {
+  padding-left: 60px;
+  margin-top: 50px;
+}
+
+.main-text {
+  font-size: 42px;
+  font-weight: bold;
+  max-width: 500px;
+}
+
+.highlight {
+  color: #FFD700;
+}
+
+.search-btn {
+  display: inline-block;
+  margin-top: 60px;
+  background-color: rgb(246, 246, 246);
+  color: rgb(20, 2, 2);
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.search-btn:hover {
+  background-color: yellow;
+}
+
+/* Footer */
+.footer {
+  padding: 20px 0;
+  text-align: center;
+  background: transparent;
+}
+
+.footer .social-text {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.footer .social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.footer .social-icons a {
+  color: white;
+  font-size: 20px;
+  transition: transform 0.3s;
+}
+
+.footer .social-icons a:hover {
+  transform: scale(1.2);
+  color: #FFD700;
+}
+

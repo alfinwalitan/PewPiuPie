@@ -1,0 +1,61 @@
+.menu {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+
+.container {
+    background-color: white;
+    padding: 30px;
+    max-width: 700px;
+    margin: 30px auto;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-text{
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+textarea {
+    resize: vertical;
+    height: 80px;
+}
+
+button {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: #007bff;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}

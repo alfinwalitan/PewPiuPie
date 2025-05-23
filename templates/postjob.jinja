@@ -1,0 +1,40 @@
+{% extends "base_hrd.jinja" %}
+
+{% block title %}Post New Job{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='postjob.css') }}">
+{% endblock %}
+
+{% block content %}
+    <h2 class='post-text'>Post New Job</h2>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    {% if success %}
+        <div class="alert alert-success">{{ success }}</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('post_job') }}">
+        <label>Job Title:</label>
+        <input type="text" name="job_title" placeholder="System Engineer" required>
+
+        <label>Job Experience (Year):</label>
+        <input type="number" name="experience" placeholder="0" min="0" required>
+
+        <label>Education Requirement:</label>
+        <input type="text" name="education" placeholder="Bachelor of Science" required>
+
+        <label>Skills Requirements:</label>
+        <textarea name="skills" placeholder="Linux, PowerShell, etc." required></textarea>
+
+        <label>Location:</label>
+        <input type="text" name="location" placeholder="Padang" required>
+
+        <label>Application Deadline:</label>
+        <input type="date" name="deadline" required>
+
+        <button type="submit">Post Job</button>
+    </form>
+{% endblock %}

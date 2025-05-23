@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jobbers Splash</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='splash.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="logo">Jobbers</div>
+    <div class="nav">
+      <a href="{{ url_for('signin') }}" class="btn login">Login</a>
+      <a href="{{ url_for('signup') }}" class="btn signup">Sign Up</a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <h1>Find Your <span class="highlight">Dream Job</span> Today!</h1>
+    <a href="{{ url_for('signin') }}" class="btn search-btn">Search Job</a>
+  </div>
+
+  <div class="footer">
+    <div class="social-text">Follow us on</div>
+    <div class="social-icons">
+      <a href="#"><i class="fab fa-facebook"></i></a>
+      <a href="#"><i class="fab fa-youtube"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+    </div>
+  </div>
+</body>
+</html>

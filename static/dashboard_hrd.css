@@ -1,0 +1,106 @@
+h1 {
+    font-size: 28px;
+}
+
+h2 {
+    margin-top: 30px;
+}
+
+.welcome-text {
+    margin-top: -20px;
+    color: #1e1e1e;
+}
+
+.job-list {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.job-card {
+    background-color: #f0f0f0;
+    width: 400px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding-bottom: 15px;
+}
+
+.job-card h4 {
+    background-color: #001f4d;
+    color: white;
+    margin: 0;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.job-card p {
+    margin: 10px 0;
+    padding: 0 15px;
+    color: #333;
+}
+
+.job-card em {
+    font-style: italic;
+    color: #444;
+}
+
+.job-card .deadline-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    margin: 0;
+}
+
+.job-card .deadline {
+    color: black;
+    font-weight: normal;
+    margin: 0;
+    margin-top: 30px;
+    padding: 0;
+}
+
+.job-card .deadline span {
+    color: #1d80f8;
+    font-weight: bold;
+}
+
+.view-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 14px;
+    margin-top: 30px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    cursor: pointer;
+    border: none;
+}
+
+.view-btn:hover {
+    background-color: #0056b3;
+}
+
+.post-job-btn {
+    position: absolute;
+    top: 120px;
+    right: 40px;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 500;
+    text-decoration: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.post-job-btn:hover {
+    background-color: #4100f4;
+}
