@@ -11,7 +11,7 @@
         <div class="logo">Jobbers</div>
         <div class="menu">
             <a href="{{ url_for('dashboard_pelamar') }}" class="btn-nav {% if active_page == 'dashboard' %}active{% endif %}">🏠 Dashboard</a>
-            <a href="/my-application" class="btn-nav {% if active_page == 'my_application' %}active{% endif %}">📄 My Application</a>
+            <a href="{{ url_for('application_history') }}" class="btn-nav {% if active_page == 'applications' %}active{% endif %}">📄 My Application</a>
             <span class="btn-nav user-icon">👤 {{ user_name }}</span>
         </div>
     </header>

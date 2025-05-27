@@ -1,0 +1,37 @@
+{% extends "base_pelamar.jinja" %}
+
+{% block title %}My Application{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='application.css') }}">
+{% endblock %}
+
+{% block content %}
+    <h1>My Application</h1>
+    <p class="subtitle">Help users track the status of their job applications.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Designation</th>
+                <th>Upload Date</th>
+                <th>Status</th>
+                <th>Resume</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in applications %}
+            <tr>
+                <td>{{ app.designation }}</td>
+                <td>{{ app.upload_date }}</td>
+                <td>{{ app.status }}</td>
+                <td>
+                    <a href="{{ app.resume_link }}">
+                        <button class="btn">Preview Resume</button>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

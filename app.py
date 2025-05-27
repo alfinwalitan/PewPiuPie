@@ -10,7 +10,7 @@ app.secret_key = 'your_secret_key'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'auth_app'
+app.config['MYSQL_DB'] = 'my_app'
 
 mysql = MySQL(app)
 ph = PasswordHasher()
@@ -172,6 +172,27 @@ def dashboard_pelamar():
 def logout():
     session.clear()
     return redirect(url_for('signin'))
+
+# MY APPLICATION
+@app.route('/applications')
+def application_history():
+
+    # Dummy data for testing, will be replace later
+    applications = [
+        {
+            "designation": "System Engineer",
+            "upload_date": "13 April 2025",
+            "status": "In Progress",
+            "resume_link": "#"
+        },
+        {
+            "designation": "Machine Learning Engineer",
+            "upload_date": "19 January 2025",
+            "status": "Proceed to Interview",
+            "resume_link": "#"
+        },
+    ]
+    return render_template("application.jinja", applications=applications, user_name=session.get('user_name'), active_page='applications')
 
 # RUN
 if __name__ == '__main__':
