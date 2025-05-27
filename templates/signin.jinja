@@ -14,7 +14,7 @@
         <h2 style="color: yellow">Sign In</h2>
 
         {% if error %}
-            <div class="error-message">{{ error }}</div>
+            <div class="error-message" id="error-message">{{ error }}</div>
         {% endif %}
 
         <form action="{{ url_for('signin') }}" method="post">
@@ -49,6 +49,14 @@
                 eye.classList.remove("active");
                 eyeSlash.classList.add("active");
             }
+        }
+
+        // Auto-hide error message after 3 seconds
+        const errorDiv = document.getElementById('error-message');
+        if (errorDiv) {
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 3000);
         }
     </script>
 </body>

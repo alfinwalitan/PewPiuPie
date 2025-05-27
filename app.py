@@ -2,11 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 from argon2 import PasswordHasher
+import re
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# DATABASE CONFIGURATION
+# CONFIGURASI DATABASE
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
@@ -15,11 +16,9 @@ app.config['MYSQL_DB'] = 'my_app'
 mysql = MySQL(app)
 ph = PasswordHasher()
 
-# CREATE TABLE
+# Buat tabel jika belum ada
 def create_table():
     cur = mysql.connection.cursor()
-    
-    # Tabel users
     cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -29,8 +28,6 @@ def create_table():
             role VARCHAR(20) NOT NULL DEFAULT 'user'
         )
     """)
-    
-    # Tabel jobs
     cur.execute("""
         CREATE TABLE IF NOT EXISTS jobs (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -45,47 +42,65 @@ def create_table():
             FOREIGN KEY (posted_by) REFERENCES users(id)
         )
     """)
-    
     mysql.connection.commit()
     cur.close()
+
+# Validasi email
+def is_valid_email(email):
+    regex = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+    return re.match(regex, email)
+
+# SPLASH SCREEN
+@app.route('/splash_screen')
+def splash():
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cur.execute("SELECT * FROM jobs ORDER BY posted_at DESC")
+    jobs = cur.fetchall()
+    cur.close()
+    return render_template('splash_new.jinja', jobs=jobs)
 
 # SIGN UP
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    error = None
     if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
+        name = request.form['name'].strip()
+        email = request.form['email'].strip()
         password = request.form['password']
         confirm_password = request.form['confirm_password']
 
-        if password != confirm_password:
-            return render_template('signup.jinja', error="Passwords do not match!")
+        if not name or not email or not password or not confirm_password:
+            error = "Please fill out all fields."
+        elif not is_valid_email(email):
+            error = "Invalid email format."
+        elif password != confirm_password:
+            error = "Passwords do not match!"
+        elif len(password) < 6:
+            error = "Password must be at least 6 characters."
+        else:
+            cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+            if cur.fetchone():
+                error = "Email already registered!"
+            else:
+                hashed_password = ph.hash(password)
+                cur.execute(
+                    "INSERT INTO users (name, email, password, role) VALUES (%s, %s, %s, %s)",
+                    (name, email, hashed_password, 'user')
+                )
+                mysql.connection.commit()
+                cur.close()
+                return redirect(url_for('signin'))
+            cur.close()
 
-        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cur.execute("SELECT * FROM users WHERE email = %s", (email,))
-        account = cur.fetchone()
-
-        if account:
-            return render_template('signup.jinja', error="Email already registered!")
-
-        hashed_password = ph.hash(password)
-
-        cur.execute(
-            "INSERT INTO users (name, email, password, role) VALUES (%s, %s, %s, %s)",
-            (name, email, hashed_password, 'user')
-        )
-        mysql.connection.commit()
-        cur.close()
-
-        return redirect(url_for('signin'))
-
-    return render_template('signup.jinja', error=None)
+    return render_template('signup.jinja', error=error)
 
 # SIGN IN
 @app.route('/signin', methods=['GET', 'POST'])
 def signin():
+    error = None
     if request.method == 'POST':
-        email = request.form['email']
+        email = request.form['email'].strip()
         password = request.form['password']
 
         cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -96,28 +111,22 @@ def signin():
         if account:
             try:
                 ph.verify(account['password'], password)
-
-                # Simpan data ke session
                 session['user_id'] = account['id']
                 session['user_name'] = account['name']
                 session['user_role'] = account['role']
 
-                if account['role'] == 'admin':
-                    return redirect(url_for('dashboardhrd'))
-                else:
-                    return redirect(url_for('dashboard_pelamar'))
-
+                return redirect(url_for('dashboardhrd' if account['role'] == 'admin' else 'dashboard_pelamar'))
             except:
-                return render_template('signin.jinja', error="Invalid email or password!")
+                error = "Invalid email or password!"
         else:
-            return render_template('signin.jinja', error="Invalid email or password!")
+            error = "Invalid email or password!"
 
-    return render_template('signin.jinja', error=None)
+    return render_template('signin.jinja', error=error)
 
-# DASHBOARD HRD (Admin)
+# DASHBOARD HRD
 @app.route('/dashboardhrd')
 def dashboardhrd():
-    if 'user_id' not in session:
+    if 'user_id' not in session or session.get('user_role') != 'admin':
         return redirect(url_for('signin'))
 
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -130,7 +139,7 @@ def dashboardhrd():
 # POST JOB
 @app.route('/post-job', methods=['GET', 'POST'])
 def post_job():
-    if 'user_id' not in session:
+    if 'user_id' not in session or session.get('user_role') != 'admin':
         return redirect(url_for('signin'))
 
     if request.method == 'POST':
@@ -140,7 +149,7 @@ def post_job():
         skills = request.form['skills']
         location = request.form['location']
         deadline = request.form['deadline']
-        posted_by = session['user_id']  # ambil user id dari session
+        posted_by = session['user_id']
 
         cur = mysql.connection.cursor()
         cur.execute("""
@@ -157,7 +166,7 @@ def post_job():
 # DASHBOARD USER
 @app.route('/dashboardpelamar')
 def dashboard_pelamar():
-    if 'user_id' not in session:
+    if 'user_id' not in session or session.get('user_role') != 'user':
         return redirect(url_for('signin'))
 
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -167,17 +176,12 @@ def dashboard_pelamar():
 
     return render_template('dashboard_pelamar.jinja', jobs=jobs, user_name=session.get('user_name'), active_page='dashboard')
 
-# LOGOUT
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('signin'))
-
-# MY APPLICATION
+# APLIKASI USER (Dummy)
 @app.route('/applications')
 def application_history():
+    if 'user_id' not in session:
+        return redirect(url_for('signin'))
 
-    # Dummy data for testing, will be replace later
     applications = [
         {
             "designation": "System Engineer",
@@ -194,7 +198,13 @@ def application_history():
     ]
     return render_template("application.jinja", applications=applications, user_name=session.get('user_name'), active_page='applications')
 
-# RUN
+# LOGOUT
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('signin'))
+
+# RUN SERVER
 if __name__ == '__main__':
     with app.app_context():
         create_table()
