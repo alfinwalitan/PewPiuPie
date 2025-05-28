@@ -12,12 +12,96 @@
         <div class="menu">
             <a href="{{ url_for('dashboard_pelamar') }}" class="btn-nav {% if active_page == 'dashboard' %}active{% endif %}">🏠 Dashboard</a>
             <a href="{{ url_for('application_history') }}" class="btn-nav {% if active_page == 'applications' %}active{% endif %}">📄 My Application</a>
-            <span class="btn-nav user-icon">👤 {{ user_name }}</span>
+            <span class="btn-nav user-icon" id="userIcon">👤 {{ user_name }}</span>
         </div>
     </header>
 
     <div class="container">
         {% block content %}{% endblock %}
     </div>
+
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+
+            <div class="modal-header">
+                <h2>Jobbers</h2>
+            </div>
+
+            <div class="modal-body">
+                <form id="editNameForm" method="POST" action="{{ url_for('update_name') }}">
+                    <input type="hidden" name="user_id" value="{{ user_id }}">
+
+                    <label for="name">Username</label>
+                    <input type="text" id="name" name="name" value="{{ user_name }}" required>
+
+                    <label for="email">Email</label>
+                    <input type="text" id="email" name="email" value="{{ user_email }}" disabled>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="save-btn">Save</button>
+                        <a href="{{ url_for('logout') }}" class="logout-btn">Log Out</a>
+                    </div>
+                </form>
+
+                <div id="successMessage">Saved Succesfully!</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('userModal');
+        const userIcon = document.getElementById('userIcon');
+        const closeBtn = document.getElementById('closeModal');
+        const successMessage = document.getElementById('successMessage');
+
+        userIcon.addEventListener('click', () => {
+            modal.classList.add('show');
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('show');
+            successMessage.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('show');
+                successMessage.style.display = 'none';
+            }
+        });
+
+        document.getElementById('editNameForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                } else {
+                    document.querySelector('.user-icon').textContent = '👤 ' + data.new_name;
+
+                    successMessage.style.display = 'block';
+
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                        modal.classList.remove('show');
+                    }, 2000);
+                }
+            })
+            .catch(err => {
+                alert('Error Occured: ' + err);
+            });
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

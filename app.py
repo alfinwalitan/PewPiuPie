@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 from argon2 import PasswordHasher
@@ -86,7 +86,7 @@ def is_valid_email(email):
 #     return render_template('splash.jinja', jobs=jobs)
 
 # SPLASH SCREEN 2
-@app.route('/splash')
+@app.route('/')
 def splash():
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cur.execute("SELECT * FROM jobs ORDER BY posted_at DESC")
@@ -149,6 +149,7 @@ def signin():
                 session['user_id'] = account['id']
                 session['user_name'] = account['name']
                 session['user_role'] = account['role']
+                session['user_email'] = account['email']
 
                 return redirect(url_for('dashboardhrd' if account['role'] == 'admin' else 'dashboard_pelamar'))
             except:
@@ -169,7 +170,13 @@ def dashboardhrd():
     jobs = cur.fetchall()
     cur.close()
 
-    return render_template('dashboard_hrd.jinja', jobs=jobs, user_name=session.get('user_name'))
+    return render_template(
+        'dashboard_hrd.jinja',
+        jobs=jobs,
+        user_name=session.get('user_name'),
+        user_email=session.get('user_email'),
+        active_page='dashboard'
+    )
 
 # POST JOB
 @app.route('/post-job', methods=['GET', 'POST'])
@@ -209,7 +216,33 @@ def dashboard_pelamar():
     jobs = cur.fetchall()
     cur.close()
 
-    return render_template('dashboard_pelamar.jinja', jobs=jobs, user_name=session.get('user_name'), active_page='dashboard')
+    return render_template(
+        'dashboard_pelamar.jinja',
+        jobs=jobs,
+        user_name=session.get('user_name'),
+        user_email=session.get('user_email'),
+        active_page='dashboard'
+    )
+
+# UPDATE NAME
+@app.route('/update-name', methods=['POST'])
+def update_name():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    new_name = request.form.get('name', '').strip()
+    if not new_name:
+        return jsonify({'error': 'Name cannot be empty'}), 400
+
+    user_id = session['user_id']
+    cur = mysql.connection.cursor()
+    cur.execute("UPDATE users SET name = %s WHERE id = %s", (new_name, user_id))
+    mysql.connection.commit()
+    cur.close()
+
+    session['user_name'] = new_name
+
+    return jsonify({'message': 'Name updated successfully', 'new_name': new_name})
 
 # MY APPLICATION USING (Dummy) DATA FOR TESTING
 @app.route('/applications')
