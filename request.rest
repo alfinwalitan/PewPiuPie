@@ -1,0 +1,9 @@
+### Create Admin User
+POST http://localhost:5000/create-admin
+Content-Type: application/json
+
+{
+  "name": "Admin",
+  "email": "admin@example.com",
+  "password": "admin12345"
+}

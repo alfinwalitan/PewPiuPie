@@ -5,7 +5,7 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', sans-serif;
   height: 100vh;
   background: linear-gradient(to right, #1e0242 20%, rgba(255, 255, 255, 0.525)),
               url('City.jpg') no-repeat center center/cover;
@@ -75,7 +75,7 @@ body {
 }
 
 .highlight {
-  animation: colorChange 8s infinite;
+  color:#FFD700
 }
 
 .job-list {
@@ -110,6 +110,11 @@ body {
   margin: 10px 0;
   padding: 0 15px;
   color: #333;
+}
+
+.job-card i {
+  color: #001f4d;
+  margin-right: 6px;
 }
 
 .job-card .deadline-row {
@@ -178,12 +183,4 @@ body {
 .footer .social-icons a:hover {
   transform: scale(1.2);
   color: #FFD700;
-}
-
-@keyframes colorChange {
-  0%   { color: #ff0000; }
-  25%  { color: #00ff00; }
-  50%  { color: #0000ff; }
-  75%  { color: #ff00ff; }
-  100% { color: #ff0000; }
 }

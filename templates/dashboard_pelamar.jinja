@@ -4,6 +4,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='dashboard_pelamar.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 {% endblock %}
 
 {% block content %}
@@ -14,9 +15,17 @@
     <div class="job-cards">
         {% for job in jobs %}
         <div class="job-card">
-            <h4>{{ job.job_title }}</h4>
-            <p><em>Have Skills in {{ job.skills }}</em></p>
-            <p>Min. {{ job.experience }} Years Experience</p>
+        <h4>{{ job.job_title }}</h4>
+
+        <p>
+            <i class="fas fa-code"></i>
+            Have Skills in <em>{{ job.skills }}</em>
+        </p>
+
+        <p>
+            <i class="fas fa-briefcase"></i>
+            &nbsp;Min: {{ job.experience }} Years Experience
+        </p>
 
             <div class="deadline-row">
                 <p class="deadline">Available until: <span>{{ job.deadline }}</span></p>

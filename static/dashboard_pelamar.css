@@ -43,6 +43,11 @@ h2 {
     color: #333;
 }
 
+.job-card i {
+  color: #001f4d;
+  margin-right: 6px;
+}
+
 .job-card .deadline-row {
     display: flex;
     justify-content: space-between;

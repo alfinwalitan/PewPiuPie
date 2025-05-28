@@ -24,8 +24,19 @@
     {% for job in jobs %}
     <div class="job-card">
       <h4>{{ job.job_title }}</h4>
-      <p><em>Have Skills in {{ job.skills }}</em></p>
-      <p>Min: {{ job.experience }} Years Experience</p>
+
+      <p>
+        <i class="fas fa-code"></i>
+        Have Skills in <em>{{ job.skills }}</em>
+      </p>
+
+
+      <p>
+        <i class="fas fa-briefcase"></i>
+        &nbsp;Min: {{ job.experience }} Years Experience
+      </p>
+
+
       <div class="deadline-row">
         <p class="deadline">Available until: <span>{{ job.deadline }}</span></p>
         <a href="{% if session.get('user_id') %}

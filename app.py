@@ -16,7 +16,7 @@ app.config['MYSQL_DB'] = 'my_app'
 mysql = MySQL(app)
 ph = PasswordHasher()
 
-# Buat tabel jika belum ada
+# CREATE TABLE IF NOT EXIST
 def create_table():
     cur = mysql.connection.cursor()
     cur.execute("""
@@ -45,13 +45,48 @@ def create_table():
     mysql.connection.commit()
     cur.close()
 
-# Validasi email
+# CREATE ADMIN USER
+# ONLY USE THIS ONE TIME FOR CREATING ADMIN USER
+# @app.route('/create-admin', methods=['POST'])
+# def create_admin():
+#     data = request.json
+#     name = data.get("name")
+#     email = data.get("email")
+#     password = data.get("password")
+
+#     if not name or not email or not password:
+#         return {"error": "Incomplete data"}, 400
+
+#     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+#     cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+#     if cur.fetchone():
+#         return {"error": "Admin already exists"}, 400
+
+#     hashed_pw = ph.hash(password)
+#     cur.execute("INSERT INTO users (name, email, password, role) VALUES (%s, %s, %s, %s)",
+#                 (name, email, hashed_pw, "admin"))
+#     mysql.connection.commit()
+#     cur.close()
+
+#     return {"message": "Admin created successfully"}
+
+
+# EMAIL VALIDATION
 def is_valid_email(email):
     regex = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
     return re.match(regex, email)
 
-# SPLASH SCREEN
-@app.route('/splash_screen')
+# SPLASH SCREEN 1
+# @app.route('/splash')
+# def splash():
+#     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+#     cur.execute("SELECT * FROM jobs ORDER BY posted_at DESC")
+#     jobs = cur.fetchall()
+#     cur.close()
+#     return render_template('splash.jinja', jobs=jobs)
+
+# SPLASH SCREEN 2
+@app.route('/splash')
 def splash():
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cur.execute("SELECT * FROM jobs ORDER BY posted_at DESC")
@@ -176,7 +211,7 @@ def dashboard_pelamar():
 
     return render_template('dashboard_pelamar.jinja', jobs=jobs, user_name=session.get('user_name'), active_page='dashboard')
 
-# APLIKASI USER (Dummy)
+# MY APPLICATION USING (Dummy) DATA FOR TESTING
 @app.route('/applications')
 def application_history():
     if 'user_id' not in session:

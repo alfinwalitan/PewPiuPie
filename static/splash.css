@@ -5,27 +5,67 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', sans-serif;
   height: 100vh;
-  background: linear-gradient(to right, #0f0f0f 20%, rgba(127, 124, 124, 0.525)),
-              url('City.jpg') no-repeat center center/cover;
+  background: linear-gradient(to right, #1a1a1a 30%, rgba(255, 255, 255, 0.525)), url('City.jpg') no-repeat center center/cover;
+  background-blend-mode: overlay;
+  animation: bgChange 10s infinite alternate;
   color: white;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition: background 1s ease-in-out;
 }
 
-.container {
-  padding: 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1a1a1a;
+    padding: 15px 30px;
+    color: white;
 }
 
 .logo {
-  font-size: 24px;
-  font-weight: bold;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-weight: 600;
+}
+
+.menu .btn-nav {
+    text-decoration: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.menu .btn-nav:hover {
+    background-color: transparent;
+    color: #FFD700;
+    transition: ease-in-out 0.2s;
+}
+
+.btn-nav.active {
+    background-color: #007bff;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.container {
+    padding: 40px 60px;
 }
 
 .nav {
@@ -62,9 +102,11 @@ body {
   box-shadow: none;
 }
 
-
 .main-content{
     margin-left: 60px;
+    margin-bottom: -30px;
+    margin-top: -200px;
+    font-size: 30px;
 }
 
 .main-section {
@@ -79,24 +121,81 @@ body {
 }
 
 .highlight {
-  color: #FFD700;
+  color:#FFD700;
 }
 
-.search-btn {
-  display: inline-block;
-  margin-top: 60px;
-  background-color: rgb(246, 246, 246);
-  color: rgb(20, 2, 2);
-  padding: 12px 24px;
-  border-radius: 30px;
-  font-size: 16px;
+.job-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-top: -15%;
+  padding: 0 60px;
+  justify-content: flex-start;
+}
+
+.job-card {
+  background-color: #f0f0f0;
+  width: 400px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(255, 255, 255, 0.4);
+  padding-bottom: 15px;
+}
+
+.job-card h4 {
+  background-color: #001f4d;
+  color: white;
+  margin: 0;
+  padding: 12px;
+  font-size: 18px;
   font-weight: bold;
-  text-decoration: none;
-  transition: 0.3s;
+  text-align: center;
 }
 
-.search-btn:hover {
-  background-color: yellow;
+.job-card p {
+  margin: 10px 0;
+  padding: 0 15px;
+  color: #333;
+}
+
+.job-card .deadline-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  margin: 0;
+}
+
+.job-card .deadline {
+  color: black;
+  font-weight: normal;
+  margin: 0;
+  margin-top: 30px;
+  padding: 0;
+}
+
+.job-card .deadline span {
+  color: #1d80f8;
+  font-weight: bold;
+}
+
+.view-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 14px;
+  margin-top: 30px;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  border: none;
+}
+
+.view-btn:hover {
+  background-color: #0056b3;
 }
 
 /* Footer */
@@ -128,3 +227,28 @@ body {
   color: #FFD700;
 }
 
+@keyframes colorChange {
+  0%   { color: #ff0000; }
+  25%  { color: #00ff00; }
+  50%  { color: #0000ff; }
+  75%  { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+@keyframes bgChange {
+  0% {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  25% {
+    background-color: rgba(128, 0, 128, 0.5);
+  }
+  50% {
+    background-color: rgba(0, 128, 128, 0.5);
+  }
+  75% {
+    background-color: rgba(255, 0, 0, 0.5);
+  }
+  100% {
+    background-color: rgba(0, 0, 255, 0.5);
+  }
+}
