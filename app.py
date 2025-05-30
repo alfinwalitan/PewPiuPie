@@ -224,7 +224,7 @@ def dashboard_pelamar():
         active_page='dashboard'
     )
 
-# UPDATE NAME
+# EDIT PROFILE
 @app.route('/update-name', methods=['POST'])
 def update_name():
     if 'user_id' not in session:
@@ -264,7 +264,40 @@ def application_history():
             "resume_link": "#"
         },
     ]
-    return render_template("application.jinja", applications=applications, user_name=session.get('user_name'), active_page='applications')
+    return render_template(
+    "application.jinja",
+    applications=applications,
+    user_name=session.get('user_name'),
+    user_email=session.get('user_email'),
+    active_page='applications'
+)
+
+# JOB DETAIL PELAMAR
+@app.route("/job-detail/<int:job_id>")
+def job_detail(job_id):
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cur.execute("SELECT * FROM jobs WHERE id = %s", (job_id,))
+    job = cur.fetchone()
+    cur.close()
+
+    if not job:
+        return "Job not found", 404
+
+    return render_template(
+    "jobdetail_pelamar.jinja",
+    job=job,
+    user_name=session.get('user_name'),
+    user_email=session.get('user_email')
+)
+
+# UPLOAD RESUME
+@app.route("/upload-resume")
+def upload_resume():
+    return render_template(
+    "upload_resume.jinja",
+    user_name=session.get('user_name'),
+    user_email=session.get('user_email')
+)
 
 # LOGOUT
 @app.route('/logout')

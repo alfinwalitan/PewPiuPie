@@ -1,45 +1,47 @@
-.menu {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-}
-
-.container {
+.post-job-wrapper {
     background-color: white;
     padding: 30px;
     max-width: 700px;
-    margin: 30px auto;
+    margin: 20px auto;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
 }
 
-.post-text{
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin-top: 15px;
+.post-job-wrapper .post-text {
+    margin-bottom: 10px;
+    font-size: 24px;
     font-weight: bold;
 }
 
-input[type="text"],
-input[type="number"],
-input[type="date"],
-textarea {
+.post-job-wrapper label {
+    display: block;
+    margin-top: 2px;
+    margin-bottom: -3px;
+    font-weight: bold;
+    color: #000000;
+}
+
+.post-job-wrapper input[type="text"],
+.post-job-wrapper input[type="number"],
+.post-job-wrapper input[type="date"],
+.post-job-wrapper textarea {
     width: 100%;
     padding: 10px;
-    margin-top: 5px;
+    margin-top: 6px;
+    margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
 }
 
-textarea {
+.post-job-wrapper textarea {
     resize: vertical;
-    height: 80px;
+    height: 100px;
 }
 
-button {
+.post-job-wrapper button {
     margin-top: 20px;
     padding: 12px 20px;
     background: #007bff;
@@ -47,13 +49,14 @@ button {
     color: white;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 16px;
 }
 
-button:hover {
+.post-job-wrapper button:hover {
     background: #0056b3;
 }
 
-.menu {
+.post-job-wrapper .menu {
     display: flex;
     align-items: center;
     gap: 20px;

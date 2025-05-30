@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 
-body {
+/* body {
   font-family: 'Segoe UI', sans-serif;
   height: 100vh;
   background: linear-gradient(to right, #1e0242 20%, rgba(255, 255, 255, 0.525)),
@@ -14,6 +14,23 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+} */
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  height: 100vh;
+  margin: 0;
+  color: white;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  background: 
+    linear-gradient(to right, #1e0242 20%, rgba(255, 255, 255, 0.525)),
+    url('City.jpg') no-repeat center center/cover;
+  background-size: 200% 100%;
+  animation: gradientFlow 8s ease-in-out infinite alternate;
 }
 
 .container {
@@ -183,4 +200,13 @@ body {
 .footer .social-icons a:hover {
   transform: scale(1.2);
   color: #FFD700;
+}
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 0%;
+  }
 }

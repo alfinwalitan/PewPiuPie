@@ -1,0 +1,25 @@
+{% extends "base_pelamar.jinja" %}
+
+{% block title %}Job Description - Pelamar{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='jobdetail_pelamar.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<h1>Job Description</h1>
+
+<div class="job-detail-container">
+    <p><strong>Job Title : </strong> {{ job.job_title }}</p>
+    <p><strong>Job Experience (Year) : </strong> {{ job.experience }}</p>
+    <p><strong>Education Requirement : </strong> {{ job.education }}</p>
+    <p><strong>Skills : </strong> {{ job.skills }}</p>
+    <p><strong>Location : </strong> {{ job.location }}</p>
+    <p><strong>Application Deadline : </strong> {{ job.deadline }}</p>
+</div>
+
+<div class="center-container">
+    <button class="upload-btn" onclick="window.location.href='/upload-resume'">Upload Resume</button>
+</div>
+{% endblock %}

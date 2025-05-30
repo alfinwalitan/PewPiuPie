@@ -29,7 +29,7 @@
 
             <div class="deadline-row">
                 <p class="deadline">Available until: <span>{{ job.deadline }}</span></p>
-                <a href="#" class="view-btn">View Details</a>
+                <a href="{{ url_for('job_detail', job_id=job.id) }}" class="view-btn">View Detail</a>
             </div>
 
         </div>
