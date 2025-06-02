@@ -11,7 +11,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url('city.jpg');
+    background-image: url('/static/background/City.jpg');
     background-position: bottom;
     background-repeat: no-repeat;
     background-size: cover;

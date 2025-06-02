@@ -46,7 +46,7 @@ def create_table():
     cur.close()
 
 # CREATE ADMIN USER
-# ONLY USE THIS ONE TIME FOR CREATING ADMIN USER
+# ONLY USE THIS ONE TIME TO CREATE ADMIN USER
 # @app.route('/create-admin', methods=['POST'])
 # def create_admin():
 #     data = request.json
@@ -175,6 +175,7 @@ def dashboardhrd():
         jobs=jobs,
         user_name=session.get('user_name'),
         user_email=session.get('user_email'),
+        user_role=session.get('user_role'),
         active_page='dashboard'
     )
 
@@ -244,12 +245,13 @@ def update_name():
 
     return jsonify({'message': 'Name updated successfully', 'new_name': new_name})
 
-# MY APPLICATION USING (Dummy) DATA FOR TESTING
+# MY APPLICATION
 @app.route('/applications')
 def application_history():
     if 'user_id' not in session:
         return redirect(url_for('signin'))
 
+    # DUMMY DATA FOR TESTING
     applications = [
         {
             "designation": "System Engineer",
@@ -272,7 +274,7 @@ def application_history():
     active_page='applications'
 )
 
-# JOB DETAIL PELAMAR
+# JOB DETAIL
 @app.route("/job-detail/<int:job_id>")
 def job_detail(job_id):
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -283,12 +285,65 @@ def job_detail(job_id):
     if not job:
         return "Job not found", 404
 
-    return render_template(
-    "jobdetail_pelamar.jinja",
-    job=job,
-    user_name=session.get('user_name'),
-    user_email=session.get('user_email')
-)
+    # DUMMY DATA FOR TESTING
+    candidates = [
+        {
+            'id': 1,
+            'name': 'Andi',
+            'designation': 'Junior Developer',
+            'experience': 'December 2014 to Present',
+            'skills': 'Python, Flask',
+            'score': 65,
+            'recommendation': 'Not Suitable'
+        },
+        {
+            'id': 2,
+            'name': 'Budi',
+            'designation': 'Developer',
+            'experience': 'December 2015 to February 2018',
+            'skills': 'Python, Django, Command Prompt, Problem Solving',
+            'score': 90,
+            'recommendation': 'Highly Suitable'
+        }
+    ]
+
+    role = session.get('user_role')
+
+    if role == 'admin':
+        return render_template(
+            "jobdetail_hrd.jinja",
+            job=job,
+            candidates=candidates,
+            user_name=session.get('user_name'),
+            user_email=session.get('user_email')
+        )
+    else:
+        return render_template(
+            "jobdetail_pelamar.jinja",
+            job=job,
+            candidates=candidates,
+            user_name=session.get('user_name'),
+            user_email=session.get('user_email')
+        )
+
+# DELETE JOB
+@app.route('/delete-job/<int:job_id>', methods=['DELETE'])
+def delete_job(job_id):
+    if 'user_id' not in session or session.get('user_role') not in ['admin', 'hrd']:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM jobs WHERE id = %s", (job_id,))
+    job = cur.fetchone()
+    if not job:
+        cur.close()
+        return jsonify({'error': 'Job not found'}), 404
+
+    cur.execute("DELETE FROM jobs WHERE id = %s", (job_id,))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify({'message': 'Job deleted successfully'})
 
 # UPLOAD RESUME
 @app.route("/upload-resume")

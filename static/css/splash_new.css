@@ -28,7 +28,7 @@ body {
   overflow: hidden;
   background: 
     linear-gradient(to right, #1e0242 20%, rgba(255, 255, 255, 0.525)),
-    url('City.jpg') no-repeat center center/cover;
+    url('/static/background/City.jpg') no-repeat center center/cover;
   background-size: 200% 100%;
   animation: gradientFlow 8s ease-in-out infinite alternate;
 }

@@ -1,0 +1,85 @@
+{% extends "base_hrd.jinja" %}
+
+{% block title %}Job Description - HRD{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jobdetail_hrd.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="header-with-button">
+  <h1>Job Description</h1>
+  <div class="btn-group">
+      <button id="btn-delete-job" class="btn-delete" data-job-id="{{ job.id }}">Delete Job</button>
+  </div>
+</div>
+
+<div class="job-detail-container">
+    <p><strong>Job Title : </strong> {{ job.job_title }}</p>
+    <p><strong>Job Experience (Year) : </strong> {{ job.experience }}</p>
+    <p><strong>Education Requirement : </strong> {{ job.education }}</p>
+    <p><strong>Skills : </strong> {{ job.skills }}</p>
+    <p><strong>Location : </strong> {{ job.location }}</p>
+    <p><strong>Application Deadline : </strong> {{ job.deadline }}</p>
+</div>
+
+<h1>Candidate</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Designation</th>
+            <th>Experiences</th>
+            <th>Skills</th>
+            <th>Score</th>
+            <th>System Recommendation</th>
+            <th>Detail</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for candidate in candidates %}
+        <tr>
+            <td>{{ candidate.name }}</td>
+            <td>{{ candidate.designation }}</td>
+            <td>{{ candidate.experience }}</td>
+            <td>{{ candidate.skills }}</td>
+            <td>{{ candidate.score }}</td>
+            <td>{{ candidate.recommendation }}</td>
+            <td><a href="#" class="btn-detail">View Detail</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+document.getElementById('btn-delete-job').addEventListener('click', function() {
+    const jobId = this.getAttribute('data-job-id');
+    if (confirm('Are you sure want to delete this job?')) {
+        fetch(`/delete-job/${jobId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401) {
+                    alert('Unauthorized: Only Admin/HRD can delete job.');
+                } else if (response.status === 404) {
+                    alert('Job not found.');
+                } else {
+                    alert('Failed to delete job.');
+                }
+                throw new Error('Delete failed');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message);
+            window.location.href = "/dashboardhrd";
+        })
+        .catch(error => console.error(error));
+    }
+});
+</script>
+
+{% endblock %}
