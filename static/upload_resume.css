@@ -1,0 +1,105 @@
+.upload-container {
+    width: 100%;
+    max-width: none;
+    margin-left: -20px;
+    margin-top: -10px;
+    padding: 0 20px;
+    text-align: left;
+}
+
+.upload-container h2 {
+    font-size: 32px;
+    text-align: left;
+    margin-bottom: 40px;
+    color: #333;
+}
+
+.form-section {
+    margin-bottom: 30px;
+    display: block;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #111;
+}
+
+.insert-button {
+    padding: 12px 24px;
+    margin-bottom: -20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.insert-button:hover {
+    background-color: #0056b3;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 18px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.upload-button {
+    padding: 14px 32px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.upload-button:hover {
+    background-color: #0056b3;
+}
+
+.upload-button-container {
+    text-align: right;
+}
+
+.upload-container #fileInfo {
+    display: block;
+    margin-top: 8px;
+    font-style: italic;
+    color: #555;
+}
+
+.upload-container #fileNameDisplay {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.upload-container #clearFileBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #888;
+    padding: 0;
+}
+
+.upload-container #clearFileBtn:hover {
+    color: #e00;
+}
+
+#uploadedFiles {
+  margin-top: 6px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
