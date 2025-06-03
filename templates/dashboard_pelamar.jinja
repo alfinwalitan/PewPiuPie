@@ -8,32 +8,49 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Recruitment Dashboard</h1>
-    <p class='welcome-text'>Welcome Back, {{ user_name }}!</p>
-
-    <h2>Active Jobs Postings</h2>
-    <div class="job-cards">
-        {% for job in jobs %}
-        <div class="job-card">
-        <h4>{{ job.job_title }}</h4>
-
-        <p>
-            <i class="fas fa-code"></i>
-            Have Skills in <em>{{ job.skills }}</em>
-        </p>
-
-        <p>
-            <i class="fas fa-briefcase"></i>
-            &nbsp;Min: {{ job.experience }} Years Experience
-        </p>
-
-            <div class="deadline-row">
-                <p class="deadline">Available until: <span>{{ job.deadline }}</span></p>
-                <a href="{{ url_for('job_detail', job_id=job.id) }}" class="view-btn">View Detail</a>
-            </div>
-
-        </div>
+  <h1>Recruitment Dashboard</h1>
+  <p class='welcome-text'>Welcome Back, {{ user_name }}!</p>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="flash-message {{ category }}">{{ message }}</div>
         {% endfor %}
-    </div>
+      </div>
+    {% endif %}
+  {% endwith %}
 
+  <h2>Active Jobs Postings</h2>
+  <div class="job-cards">
+    {% for job in jobs %}
+    <div class="job-card">
+      <h4>{{ job.job_title }}</h4>
+      <p>
+        <i class="fas fa-code"></i>
+        Have Skills in <em>{{ job.skills }}</em>
+      </p>
+      <p>
+        <i class="fas fa-briefcase"></i>
+        &nbsp;Min: {{ job.experience }} Years Experience
+      </p>
+      <div class="deadline-row">
+        <p class="deadline">Available until: <span>{{ job.deadline }}</span></p>
+        <a href="{{ url_for('job_detail', job_id=job.id) }}" class="view-btn">View Detail</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <script>
+    setTimeout(() => {
+      const flashMessages = document.querySelectorAll('.flash-message');
+      flashMessages.forEach(msg => {
+        msg.style.transition = 'opacity 0.5s ease';
+        msg.style.opacity = '0';
+        setTimeout(() => {
+          msg.style.display = 'none';
+        }, 500);
+      });
+    }, 3000);
+  </script>
 {% endblock %}

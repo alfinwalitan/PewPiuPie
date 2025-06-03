@@ -1,0 +1,92 @@
+.main-content {
+    padding: 30px;
+    background-color: rgba(0, 0, 0, 0.51);
+    min-height: 90vh;
+    border-radius: 20px;
+}
+
+.resume-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+.resume-section,
+.result-section {
+    flex: 1;
+    background-color: none;
+    padding: 20px;
+    border-radius: 16px;
+}
+
+.resume-section h1{
+    margin-top: -20px;
+    font-size: 32px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.resume-section {
+    flex: 1.2;
+}
+
+.result-section {
+    flex: 0.8;
+}
+
+.result-section h1 {
+    margin-top: -20px;
+    font-size: 32px;
+    font-weight: 600;
+    color: #fff;
+}
+.resume-card img {
+    width: 80%;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.result-box {
+    background: #f8f8f8;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.score {
+    float: right;
+    color: #444;
+}
+
+.action-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+    gap: 20px;
+    
+}
+
+.action-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button.reject {
+    background-color: #e74c3c;
+    color: white;
+    padding: 12px 48px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+button.accept {
+    background-color: #2ecc71;
+    color: white;
+    padding: 12px 48px;
+    font-weight: 600;
+    font-size: 16px;
+}

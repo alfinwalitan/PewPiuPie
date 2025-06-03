@@ -1,0 +1,40 @@
+{% extends 'base_hrd.jinja' %}
+
+{% block title %}Resume Review{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/view_resume.css') }}">
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+    <div class="resume-layout">
+        <section class="resume-section">
+            <h1>Candidate’s Resume</h1>
+            <div class="resume-card">
+                <img src="{{ url_for('static', filename='resumes/resume_example.png') }}" alt="Resume Preview">
+            </div>
+        </section>
+
+        <section class="result-section">
+            <h1>Results Explanation</h1>
+            <div class="result-box">
+                <p><strong>Name : </strong> John Doe <span class="score"><strong>| Score: 76.1%</strong></span></p>
+                <p><strong>Designation : </strong> System Engineer</p>
+                <hr>
+                <p><strong>XAI Results:</strong></p>
+                <ul>
+                    <li>Experience on React (<strong>+2.3</strong>)</li>
+                    <li>AWS certification (<strong>+1.8</strong>)</li>
+                    <li>No portfolio (<strong>-1.2</strong>)</li>
+                </ul>
+            </div>
+
+            <div class="action-buttons">
+                <button class="reject">Reject</button>
+                <button class="accept">Accept</button>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}

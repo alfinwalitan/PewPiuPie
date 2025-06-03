@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+import os
+from flask import Flask, flash, render_template, request, redirect, url_for, session, jsonify
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 from argon2 import PasswordHasher
@@ -7,7 +8,8 @@ import re
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# CONFIGURASI DATABASE
+
+# DATABASE CONFIGURATION
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
@@ -15,6 +17,7 @@ app.config['MYSQL_DB'] = 'my_app'
 
 mysql = MySQL(app)
 ph = PasswordHasher()
+
 
 # CREATE TABLE IF NOT EXIST
 def create_table():
@@ -44,6 +47,7 @@ def create_table():
     """)
     mysql.connection.commit()
     cur.close()
+
 
 # CREATE ADMIN USER
 # ONLY USE THIS ONE TIME TO CREATE ADMIN USER
@@ -76,6 +80,7 @@ def is_valid_email(email):
     regex = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
     return re.match(regex, email)
 
+
 # SPLASH SCREEN 1
 # @app.route('/splash')
 # def splash():
@@ -85,6 +90,7 @@ def is_valid_email(email):
 #     cur.close()
 #     return render_template('splash.jinja', jobs=jobs)
 
+
 # SPLASH SCREEN 2
 @app.route('/')
 def splash():
@@ -93,6 +99,7 @@ def splash():
     jobs = cur.fetchall()
     cur.close()
     return render_template('splash_new.jinja', jobs=jobs)
+
 
 # SIGN UP
 @app.route('/signup', methods=['GET', 'POST'])
@@ -130,6 +137,7 @@ def signup():
 
     return render_template('signup.jinja', error=error)
 
+
 # SIGN IN
 @app.route('/signin', methods=['GET', 'POST'])
 def signin():
@@ -159,6 +167,7 @@ def signin():
 
     return render_template('signin.jinja', error=error)
 
+
 # DASHBOARD HRD
 @app.route('/dashboardhrd')
 def dashboardhrd():
@@ -178,6 +187,7 @@ def dashboardhrd():
         user_role=session.get('user_role'),
         active_page='dashboard'
     )
+
 
 # POST JOB
 @app.route('/post-job', methods=['GET', 'POST'])
@@ -206,6 +216,7 @@ def post_job():
 
     return render_template('postjob.jinja', user_name=session.get('user_name'))
 
+
 # DASHBOARD USER
 @app.route('/dashboardpelamar')
 def dashboard_pelamar():
@@ -225,6 +236,7 @@ def dashboard_pelamar():
         active_page='dashboard'
     )
 
+
 # EDIT PROFILE
 @app.route('/update-name', methods=['POST'])
 def update_name():
@@ -240,10 +252,9 @@ def update_name():
     cur.execute("UPDATE users SET name = %s WHERE id = %s", (new_name, user_id))
     mysql.connection.commit()
     cur.close()
-
     session['user_name'] = new_name
-
     return jsonify({'message': 'Name updated successfully', 'new_name': new_name})
+
 
 # MY APPLICATION
 @app.route('/applications')
@@ -273,6 +284,7 @@ def application_history():
     user_email=session.get('user_email'),
     active_page='applications'
 )
+
 
 # JOB DETAIL
 @app.route("/job-detail/<int:job_id>")
@@ -326,6 +338,7 @@ def job_detail(job_id):
             user_email=session.get('user_email')
         )
 
+
 # DELETE JOB
 @app.route('/delete-job/<int:job_id>', methods=['DELETE'])
 def delete_job(job_id):
@@ -345,11 +358,60 @@ def delete_job(job_id):
 
     return jsonify({'message': 'Job deleted successfully'})
 
+
+# CONFIGURATION UPLOAD FILE
+app.config['UPLOAD_FOLDER'] = 'static/resumes'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
+ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 # UPLOAD RESUME
-@app.route("/upload-resume")
+@app.route("/upload-resume", methods=['GET', 'POST'])
 def upload_resume():
+    if request.method == 'POST':
+        if 'resumeUpload' not in request.files:
+            flash('No file part', 'error')
+            return redirect(request.url)
+
+        file = request.files['resumeUpload']
+        if file.filename == '':
+            flash('No selected file', 'error')
+            return redirect(request.url)
+
+        if file and allowed_file(file.filename):
+            filename = file.filename
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            flash(f'File "{filename}" uploaded successfully!', 'success')
+            return redirect(url_for('dashboard_pelamar'))
+        else:
+            flash('File type not allowed', 'error')
+            return redirect(request.url)
+
     return render_template(
-    "upload_resume.jinja",
+        "upload_resume.jinja",
+        user_name=session.get('user_name'),
+        user_email=session.get('user_email')
+    )
+
+# # UPLOAD RESUME
+# @app.route("/upload-resume")
+# def upload_resume():
+#     return render_template(
+#     "upload_resume.jinja",
+#     user_name=session.get('user_name'),
+#     user_email=session.get('user_email')
+# )
+
+
+# VIEW RESUME
+@app.route("/resume")
+def view_resume():
+    return render_template(
+    "view_resume.jinja",
     user_name=session.get('user_name'),
     user_email=session.get('user_email')
 )
@@ -359,6 +421,7 @@ def upload_resume():
 def logout():
     session.clear()
     return redirect(url_for('signin'))
+
 
 # RUN SERVER
 if __name__ == '__main__':
