@@ -410,8 +410,19 @@ def upload_resume():
 # VIEW RESUME
 @app.route("/resume")
 def view_resume():
+    candidate = {
+        "name": "John Doe",
+        "score": 76.1,
+        "designation": "System Engineer",
+        "xai_results": [
+            {"desc": "Experience on React", "score": "+2.3"},
+            {"desc": "AWS Certification", "score": "+1.8"},
+            {"desc": "No Portfolio", "score": "-1.2"}
+        ]
+    }
     return render_template(
     "view_resume.jinja",
+    candidate=candidate,
     user_name=session.get('user_name'),
     user_email=session.get('user_email')
 )

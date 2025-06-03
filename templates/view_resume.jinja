@@ -19,14 +19,16 @@
         <section class="result-section">
             <h1>Results Explanation</h1>
             <div class="result-box">
-                <p><strong>Name : </strong> John Doe <span class="score"><strong>| Score: 76.1%</strong></span></p>
-                <p><strong>Designation : </strong> System Engineer</p>
+                <p><strong>Name : </strong> {{ candidate.name }} 
+                    <span class="score"><strong>| Score: {{ candidate.score }}%</strong></span>
+                </p>
+                <p><strong>Designation : </strong> {{ candidate.designation }}</p>
                 <hr>
                 <p><strong>XAI Results:</strong></p>
                 <ul>
-                    <li>Experience on React (<strong>+2.3</strong>)</li>
-                    <li>AWS certification (<strong>+1.8</strong>)</li>
-                    <li>No portfolio (<strong>-1.2</strong>)</li>
+                    {% for result in candidate.xai_results %}
+                    <li>{{ result.desc }} (<strong>{{ result.score }}</strong>)</li>
+                    {% endfor %}
                 </ul>
             </div>
 
