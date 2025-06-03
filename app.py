@@ -410,6 +410,8 @@ def upload_resume():
 # VIEW RESUME
 @app.route("/resume")
 def view_resume():
+
+    # DUMMY DATA FOR VIEW RESUME
     candidate = {
         "name": "John Doe",
         "score": 76.1,
@@ -422,9 +424,9 @@ def view_resume():
     }
     return render_template(
     "view_resume.jinja",
-    candidate=candidate,
     user_name=session.get('user_name'),
-    user_email=session.get('user_email')
+    user_email=session.get('user_email'),
+    candidate=candidate,
 )
 
 # LOGOUT
