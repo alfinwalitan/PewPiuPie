@@ -16,7 +16,7 @@
             <div class="error-message" id="error-message">{{ error }}</div>
         {% endif %}
 
-        <form action="{{ url_for('signup') }}" method="post">
+        <form action="{{ url_for('auth.signup') }}" method="post">
             <input type="text" name="name" placeholder="Name" required>
             <input type="email" name="email" placeholder="Email" required>
 
@@ -39,7 +39,7 @@
             <button type="submit">Sign Up</button>
         </form>
 
-        <p>Have an Account? <a href="{{ url_for('signin') }}">Sign In</a></p>
+        <p>Have an Account? <a href="{{ url_for('auth.signin') }}">Sign In</a></p>
     </div>
 
     <script>

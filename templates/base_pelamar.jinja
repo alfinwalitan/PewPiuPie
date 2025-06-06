@@ -10,8 +10,8 @@
     <header>
         <div class="logo">Jobbers</div>
         <div class="menu">
-            <a href="{{ url_for('dashboard_pelamar') }}" class="btn-nav {% if active_page == 'dashboard' %}active{% endif %}">🏠 Dashboard</a>
-            <a href="{{ url_for('application_history') }}" class="btn-nav {% if active_page == 'applications' %}active{% endif %}">📄 My Application</a>
+            <a href="{{ url_for('dashboard.dashboard_pelamar') }}" class="btn-nav {% if active_page == 'dashboard' %}active{% endif %}">🏠 Dashboard</a>
+            <a href="{{ url_for('user.application_history') }}" class="btn-nav {% if active_page == 'applications' %}active{% endif %}">📄 My Application</a>
             <span class="btn-nav user-icon" id="userIcon">👤 {{ user_name }}</span>
         </div>
     </header>
@@ -29,7 +29,7 @@
             </div>
 
             <div class="modal-body">
-                <form id="editNameForm" method="POST" action="{{ url_for('update_name') }}">
+                <form id="editNameForm" method="POST" action="{{ url_for('user.update_name') }}">
                     <input type="hidden" name="user_id" value="{{ user_id }}">
 
                     <label for="name">Username</label>
@@ -40,7 +40,7 @@
 
                     <div class="modal-footer">
                         <button type="submit" class="save-btn">Save</button>
-                        <a href="{{ url_for('logout') }}" class="logout-btn">Log Out</a>
+                        <a href="{{ url_for('auth.logout') }}" class="logout-btn">Log Out</a>
                     </div>
                 </form>
 

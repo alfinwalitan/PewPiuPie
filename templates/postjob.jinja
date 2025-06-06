@@ -17,7 +17,7 @@
         <div class="alert alert-success">{{ success }}</div>
     {% endif %}
 
-    <form method="POST" action="{{ url_for('post_job') }}">
+    <form method="POST" action="{{ url_for('jobs.post_job') }}">
         <label>Job Title:</label>
         <input type="text" name="job_title" placeholder="System Engineer" required>
 

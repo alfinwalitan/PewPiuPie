@@ -10,7 +10,7 @@
     <header>
         <div class="logo">Jobbers</div>
         <div class="menu">
-            <a href="{{ url_for('dashboardhrd') }}" class="btn-nav {% if active_page == 'dashboard' %}active{% endif %}">🏠 Dashboard</a>
+            <a href="{{ url_for('dashboard.dashboardhrd') }}" class="btn-nav {% if active_page == 'dashboard' %}active{% endif %}">🏠 Dashboard</a>
             <span class="btn-nav user-icon" id="userIcon">👤 {{ user_name }}</span>
         </div>
     </header>
@@ -38,7 +38,7 @@
                     <input type="text" id="email" name="email" value="{{ user_email }}" disabled>
 
                     <div class="modal-footer">
-                        <a href="{{ url_for('logout') }}" class="logout-btn">Log Out</a>
+                        <a href="{{ url_for('auth.logout') }}" class="logout-btn">Log Out</a>
                     </div>
                 </form>
             </div>

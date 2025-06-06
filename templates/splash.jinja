@@ -11,8 +11,8 @@
   <header>
       <div class="logo">Jobbers</div>
       <div class="menu">
-            <a href="{{ url_for('signin') }}" class="btn-nav">Sign In</a>
-            <a href="{{ url_for('signup') }}" class="btn-nav">Sign Up</a>
+            <a href="{{ url_for('auth.signin') }}" class="btn-nav">Sign In</a>
+            <a href="{{ url_for('auth.signup') }}" class="btn-nav">Sign Up</a>
       </div>
   </header>
   
@@ -30,12 +30,12 @@
         <p class="deadline">Available until: <span>{{ job.deadline }}</span></p>
         <a href="{% if session.get('user_id') %}
                     {% if session.get('user_role') == 'admin' %}
-                      {{ url_for('dashboardhrd') }}
+                      {{ url_for('dashboard.dashboardhrd') }}
                     {% else %}
-                      {{ url_for('dashboard_pelamar') }}
+                      {{ url_for('dashboard.dashboard_pelamar') }}
                     {% endif %}
                   {% else %}
-                    {{ url_for('signin') }}
+                    {{ url_for('auth.signin') }}
                   {% endif %}"
            class="view-btn">
           View Details
