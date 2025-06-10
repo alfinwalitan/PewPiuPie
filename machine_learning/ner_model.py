@@ -1,6 +1,8 @@
+import os
 import spacy
 
-model_best_path = "models/roberta/model-best"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model_best_path = os.path.join(BASE_DIR, "models", "roberta", "model-best")
 model_best = spacy.load(model_best_path)
 ner_labels = [
     'Job Specific Skills',
