@@ -2,11 +2,9 @@ import os
 import shap
 import joblib
 import pandas as pd
-from .classifier import classify_res
+from .classifier import classify_res, load_rf_model
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-rf_model_path = os.path.join(BASE_DIR, "models", "random_forest", "random_forest_model_97.pkl")
-rf_model = joblib.load(rf_model_path)
+rf_model = load_rf_model()
 features_map = {
     "designation_score" : "Designation Similarity",
     "skill_score" : "Skill Similarity",

@@ -1,9 +1,16 @@
 import os
 import spacy
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-model_best_path = os.path.join(BASE_DIR, "models", "roberta", "model-best")
-model_best = spacy.load(model_best_path)
+model_best = None  # global cache
+
+def load_roberta_model():
+    global model_best
+    if model_best is None:
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        model_best_path = os.path.join(BASE_DIR, "models", "roberta", "model-best")
+        model_best = spacy.load(model_best_path)
+    return model_best
+
 ner_labels = [
     'Job Specific Skills',
     'Designation',
@@ -78,7 +85,7 @@ def ner_output(doc):
 
     return info
 
-def extract_ner(text, model = model_best):
-    nlp = model
+def extract_ner(text):
+    nlp = load_roberta_model()
     doc = nlp(text)
     return ner_output(doc)

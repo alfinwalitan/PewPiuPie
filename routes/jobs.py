@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, jsonify
 from utils import skills_str_to_list, datetime_to_str
 from models.db_init import get_connection
+from services.job_post_service import get_job_post
 
 jobs_bp = Blueprint('jobs', __name__)
 
@@ -33,12 +34,9 @@ def post_job():
     return render_template('postjob.jinja', user_name=session.get('user_name'))
 
 # JOB DETAIL
-@jobs_bp.route("/job-detail/<int:job_id>")
+@jobs_bp.route("/job-detail/<int:job_id>/")
 def job_detail(job_id):
-    cur = get_connection().cursor()
-    cur.execute("SELECT * FROM job_post WHERE id = %s", (job_id,))
-    job = cur.fetchone()
-    cur.close()
+    job = get_job_post(job_id)
 
     if not job:
         return "Job not found", 404
