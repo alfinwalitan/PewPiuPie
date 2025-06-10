@@ -1,6 +1,6 @@
 from flask import Flask
 from config import *
-from models.db_init import create_db, create_table, create_admin_user
+from models.db_init import create_db, create_table, create_recruiter_user, create_candidate_user, insert_job_post
 from routes import all_blueprints
 
 app = Flask(__name__)
@@ -16,5 +16,7 @@ if __name__ == '__main__':
     with app.app_context():
         create_db()
         create_table()
-        create_admin_user()
+        create_recruiter_user()
+        create_candidate_user()
+        insert_job_post()
     app.run(debug=True)
