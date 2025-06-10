@@ -1,0 +1,118 @@
+{
+  "lang":"en",
+  "name":"pipeline",
+  "version":"0.0.0",
+  "spacy_version":">=3.8.4,<3.9.0",
+  "description":"",
+  "author":"",
+  "email":"",
+  "url":"",
+  "license":"",
+  "spacy_git_version":"85cc763",
+  "vectors":{
+    "width":0,
+    "vectors":0,
+    "keys":0,
+    "name":null,
+    "mode":"default"
+  },
+  "labels":{
+    "transformer":[
+
+    ],
+    "ner":[
+      "College Name",
+      "Companies worked at",
+      "Degree",
+      "Designation",
+      "Email Address",
+      "Graduation Year",
+      "Job Specific Skills",
+      "Location",
+      "Name",
+      "Soft Skills",
+      "Tech Tools",
+      "Years of Experience"
+    ]
+  },
+  "pipeline":[
+    "transformer",
+    "ner"
+  ],
+  "components":[
+    "transformer",
+    "ner"
+  ],
+  "disabled":[
+
+  ],
+  "performance":{
+    "ents_f":0.7181818182,
+    "ents_p":0.7208516391,
+    "ents_r":0.7155317008,
+    "ents_per_type":{
+      "Name":{
+        "p":0.8153846154,
+        "r":0.7361111111,
+        "f":0.7737226277
+      },
+      "Designation":{
+        "p":0.7515337423,
+        "r":0.8333333333,
+        "f":0.7903225806
+      },
+      "Location":{
+        "p":0.8130081301,
+        "r":0.7633587786,
+        "f":0.7874015748
+      },
+      "Email Address":{
+        "p":0.8775510204,
+        "r":0.914893617,
+        "f":0.8958333333
+      },
+      "Years of Experience":{
+        "p":0.8393782383,
+        "r":0.8223350254,
+        "f":0.8307692308
+      },
+      "Companies worked at":{
+        "p":0.7849462366,
+        "r":0.8021978022,
+        "f":0.7934782609
+      },
+      "Tech Tools":{
+        "p":0.7943925234,
+        "r":0.8161865569,
+        "f":0.8051420839
+      },
+      "Degree":{
+        "p":0.6904761905,
+        "r":0.6444444444,
+        "f":0.6666666667
+      },
+      "College Name":{
+        "p":0.7522123894,
+        "r":0.7798165138,
+        "f":0.7657657658
+      },
+      "Graduation Year":{
+        "p":0.8235294118,
+        "r":0.8615384615,
+        "f":0.8421052632
+      },
+      "Job Specific Skills":{
+        "p":0.5249597424,
+        "r":0.5069984448,
+        "f":0.5158227848
+      },
+      "Soft Skills":{
+        "p":0.6221198157,
+        "r":0.5487804878,
+        "f":0.5831533477
+      }
+    },
+    "transformer_loss":3523.5304398537,
+    "ner_loss":5005.5606865525
+  }
+}
