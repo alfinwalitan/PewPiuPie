@@ -17,14 +17,27 @@
 
 <div class="job-detail-container">
     <p><strong>Job Title : </strong> {{ job.job_title }}</p>
-    <p><strong>Job Experience (Year) : </strong> {{ job.experience }}</p>
+    <p><strong>Job Experience (Year) : </strong> {{ job.experience }} 
+        {%if job.experience > 1 %}
+            years
+        {%elif job.experience == 1 %}
+            year
+        {%endif%}
+    </p>
     <p><strong>Education Requirement : </strong> {{ job.education }}</p>
-    <p><strong>Skills : </strong> {{ job.skills }}</p>
+    <div class="skill-container" >
+        <strong style="white-space: nowrap; align-self:flex-start; margin-top: 8px">Skills : </strong>
+        <div class="tag-container" id="skill-tag-list">
+            {% for skill in job.skills %}
+              <div class="tag">{{ skill }}</div>
+            {% endfor %}
+        </div>
+    </div>
     <p><strong>Location : </strong> {{ job.location }}</p>
     <p><strong>Application Deadline : </strong> {{ job.deadline }}</p>
 </div>
 
-<h1>Candidate</h1>
+<h1>Candidates</h1>
 <table>
     <thead>
         <tr>
@@ -42,7 +55,7 @@
         <tr>
             <td>{{ candidate.name }}</td>
             <td>{{ candidate.designation }}</td>
-            <td>{{ candidate.experience }}</td>
+            <td style="white-space: nowrap;">{{ candidate.experience }}</td>
             <td>{{ candidate.skills }}</td>
             <td>{{ candidate.score }}</td>
             <td>{{ candidate.recommendation }}</td>

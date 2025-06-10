@@ -1,5 +1,5 @@
 import MySQLdb
-from config import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB, ADMIN_EMAIL, ADMIN_NAME, ADMIN_PASSWORD
+from config import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB, RECRUITER_NAME, RECRUITER_EMAIL, RECRUITER_PASSWORD, CANDIDATE_NAME, CANDIDATE_EMAIL, CANDIDATE_PASSWORD
 from argon2 import PasswordHasher
 
 ph = PasswordHasher()
@@ -31,47 +31,161 @@ def get_connection():
 def create_table():
     connection = get_connection()
     cur = connection.cursor()
+
+    # User
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE IF NOT EXISTS user (
             id INT PRIMARY KEY AUTO_INCREMENT,
             name VARCHAR(100) NOT NULL,
             email VARCHAR(100) UNIQUE NOT NULL,
             password VARCHAR(255) NOT NULL,
-            role VARCHAR(20) NOT NULL DEFAULT 'user'
+            role ENUM('candidate', 'recruiter') NOT NULL DEFAULT 'candidate'
         )
     """)
+
+    # Resume
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS jobs (
+        CREATE TABLE IF NOT EXISTS resume (
             id INT PRIMARY KEY AUTO_INCREMENT,
+            candidate_id INT,
+            file_path VARCHAR(255),
+            FOREIGN KEY (candidate_id) REFERENCES user(id)
+        )
+    """)
+
+    # Resume Information
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS resume_information (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            resume_id INT,
+            name_res VARCHAR(100),
+            designation VARCHAR(100),
+            companies TEXT,
+            location VARCHAR(100),
+            email_res VARCHAR(100),
+            techtools TEXT,
+            specskills TEXT,
+            years_exp VARCHAR(50),
+            softskill TEXT,
+            college VARCHAR(100),
+            graduation VARCHAR(10),
+            degree VARCHAR(100),
+            FOREIGN KEY (resume_id) REFERENCES resume(id)
+        )
+    """)
+
+    # Job Post
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS job_post (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            user_id INT NOT NULL,
             job_title VARCHAR(255) NOT NULL,
             experience INT NOT NULL,
             education VARCHAR(255) NOT NULL,
             skills TEXT NOT NULL,
             location VARCHAR(255) NOT NULL,
             deadline DATE NOT NULL,
-            posted_by INT NOT NULL,
             posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (posted_by) REFERENCES users(id)
+            FOREIGN KEY (user_id) REFERENCES user(id)
         )
     """)
+
+    # Application
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS application (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            resume_id INT,
+            jobpost_id INT,
+            candidate_id INT,
+            status ENUM('Rejected', 'In Progress', 'Proceed To Interview'),
+            score FLOAT,
+            recommendation ENUM('Hightly Suitable', 'Moderately Suitable', 'Not Suitable'),
+            application_date DATE,
+            FOREIGN KEY (resume_id) REFERENCES resume(id),
+            FOREIGN KEY (jobpost_id) REFERENCES job_post(id),
+            FOREIGN KEY (candidate_id) REFERENCES user(id)
+        )
+    """)
+
+    # XAI
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS xai (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            application_id INT,
+            explanation TEXT,
+            FOREIGN KEY (application_id) REFERENCES application(id)
+        )
+    """)
+
     connection.commit()
     cur.close()
     connection.close()
+    print("✅ All tables created successfully.")
     
-# INSERT ADMIN USER
-def create_admin_user():
+# INSERT RECRUITER USER
+def create_recruiter_user():
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM users WHERE email = %s", (ADMIN_EMAIL,))
+    cursor.execute("SELECT * FROM user WHERE email = %s", (RECRUITER_EMAIL,))
     if cursor.fetchone():
-        print("⚠️ Admin user already exists. Skipping.")
+        print("⚠️ Recruiter user already exists. Skipping.")
     else:
-        hashed_pw = ph.hash(ADMIN_PASSWORD)
+        hashed_pw = ph.hash(RECRUITER_PASSWORD)
         cursor.execute(
-            "INSERT INTO users (name, email, password, role) VALUES (%s, %s, %s, %s)",
-            (ADMIN_NAME, ADMIN_EMAIL, hashed_pw, "admin")
+            "INSERT INTO user (name, email, password, role) VALUES (%s, %s, %s, %s)",
+            (RECRUITER_NAME, RECRUITER_EMAIL, hashed_pw, "recruiter")
         )
         connection.commit()
-        print("✅ Admin user created successfully.")
+        print("✅ Recruiter user created successfully.")
+    cursor.close()
+    connection.close()
+
+# INSERT CANDIDATE USER
+def create_candidate_user():
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM user WHERE email = %s", (CANDIDATE_EMAIL,))
+    if cursor.fetchone():
+        print("⚠️ Candidate user already exists. Skipping.")
+    else:
+        hashed_pw = ph.hash(CANDIDATE_PASSWORD)
+        cursor.execute(
+            "INSERT INTO user (name, email, password, role) VALUES (%s, %s, %s, %s)",
+            (CANDIDATE_NAME, CANDIDATE_EMAIL, hashed_pw, "candidate")
+        )
+        connection.commit()
+        print("✅ Candidate user created successfully.")
+    cursor.close()
+    connection.close()
+
+# INSERT JOB_POST
+def insert_job_post():
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM job_post")
+    if cursor.fetchone():
+        print("⚠️ Job Post already exists. Skipping.")
+    else:
+        cursor.execute(
+            """INSERT INTO job_post (
+                user_id,
+                job_title,
+                experience,
+                education,
+                skills,
+                location,
+                deadline
+            ) VALUES (
+                1,
+                'Software Engineer',
+                3,
+                'Bachelor of Computer Science',
+                'Detail Oriented;; data sharing;; VMware Horizon View 5.x;; 6.x;; and 7.x;; Microsoft Hyper-V;; Ticket Resolution;; IT consultation;; Mac;; Customer Service;; Project Management;; Windows;; Middleware Integration;; Software Documentation;; Creativity;; project planning;; budgeting;; design',
+                'New York, NY',
+                '2025-12-31'
+            );"""
+        )
+        connection.commit()
+        print("✅ Job Post created successfully.")
     cursor.close()
     connection.close()

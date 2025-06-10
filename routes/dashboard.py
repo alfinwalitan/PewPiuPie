@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, session, redirect, url_for
+from utils import skills_str_to_comma, datetime_to_str
 from models.db_init import get_connection
 
 dashboard_bp = Blueprint('dashboard', __name__)
@@ -7,7 +8,7 @@ dashboard_bp = Blueprint('dashboard', __name__)
 @dashboard_bp.route('/')
 def splash():
     cur = get_connection().cursor()
-    cur.execute("SELECT * FROM jobs ORDER BY posted_at DESC")
+    cur.execute("SELECT * FROM job_post ORDER BY posted_at DESC")
     jobs = cur.fetchall()
     cur.close()
     return render_template('splash_new.jinja', jobs=jobs)
@@ -15,12 +16,16 @@ def splash():
 # DASHBOARD HRD
 @dashboard_bp.route('/dashboardhrd')
 def dashboardhrd():
-    if 'user_id' not in session or session.get('user_role') != 'admin':
+    if 'user_id' not in session or session.get('user_role') != 'recruiter':
         return redirect(url_for('auth.signin'))
 
     cur = get_connection().cursor()
-    cur.execute("SELECT * FROM jobs ORDER BY posted_at DESC")
+    cur.execute("SELECT * FROM job_post ORDER BY posted_at DESC")
     jobs = cur.fetchall()
+
+    for i in range(len(jobs)):
+        jobs[i]['skills'] = skills_str_to_comma(jobs[i]['skills'])
+        jobs[i]['deadline'] = datetime_to_str(jobs[i]['deadline'])
     cur.close()
 
     return render_template(
@@ -35,12 +40,15 @@ def dashboardhrd():
 # DASHBOARD USER
 @dashboard_bp.route('/dashboardpelamar')
 def dashboard_pelamar():
-    if 'user_id' not in session or session.get('user_role') != 'user':
+    if 'user_id' not in session or session.get('user_role') != 'candidate':
         return redirect(url_for('auth.signin'))
 
     cur = get_connection().cursor()
-    cur.execute("SELECT * FROM jobs ORDER BY posted_at DESC")
+    cur.execute("SELECT * FROM job_post ORDER BY posted_at DESC")
     jobs = cur.fetchall()
+    for i in range(len(jobs)):
+        jobs[i]['skills'] = skills_str_to_comma(jobs[i]['skills'])
+        jobs[i]['deadline'] = datetime_to_str(jobs[i]['deadline'])
     cur.close()
 
     return render_template(

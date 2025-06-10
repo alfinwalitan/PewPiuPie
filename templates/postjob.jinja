@@ -19,24 +19,76 @@
 
     <form method="POST" action="{{ url_for('jobs.post_job') }}">
         <label>Job Title:</label>
-        <input type="text" name="job_title" placeholder="System Engineer" required>
+        <input type="text" name="job_title" placeholder="Enter job title (e.g. Software Engineer)" required>
 
-        <label>Job Experience (Year):</label>
-        <input type="number" name="experience" placeholder="0" min="0" required>
+        <label>Job Experience (Years):</label>
+        <input type="number" name="experience" placeholder="Enter number of years (e.g. 2)" min="0" required>
 
         <label>Education Requirement:</label>
-        <input type="text" name="education" placeholder="Bachelor of Science" required>
+        <input type="text" name="education" placeholder="Enter education qualification (e.g. Bachelor of Computer Science)" required>
 
         <label>Skills Requirements:</label>
-        <textarea name="skills" placeholder="Linux, PowerShell, etc." required></textarea>
+        <div style="margin-bottom: 10px; margin-top: 6px;">
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <input type="text" id="tag-input" placeholder="Enter a hard or soft skill (e.g. Python or Communication) and press Enter" style="flex: 1; padding: 10px; margin-top: 0px; margin-bottom: 0px">
+                <button type="button" onclick="addTag()" style="padding: 6px 12px; margin-top: 0px">Add</button>
+            </div>
+            <div class="tag-container" id="tag-list"></div>
+            <input type="hidden" name="skills" id="skills-hidden">
+        </div>
 
         <label>Location:</label>
-        <input type="text" name="location" placeholder="Padang" required>
+        <input type="text" name="location" placeholder="Enter location (e.g. New York, NY)" required>
 
         <label>Application Deadline:</label>
-        <input type="date" name="deadline" required>
+        <input id="deadline" class="picker" type="date" name="deadline" required>
 
         <button type="submit">Post Job</button>
     </form>
 </div>
+<script>
+  let skillSet = [];
+
+  function addTag() {
+    const input = document.getElementById("tag-input");
+    const tagText = input.value.trim();
+    if (!tagText || skillSet.some(skill => skill.toLowerCase() === tagText.toLowerCase())) {
+        input.value = ""
+        return
+    };
+
+    skillSet.push(tagText);
+
+    const tag = document.createElement("div");
+    tag.className = "tag";
+    tag.innerHTML = `${tagText}<span class="remove-btn" onclick="removeTag(this, '${tagText}')">×</span>`;
+    document.getElementById("tag-list").appendChild(tag);
+
+    input.value = "";
+    updateHiddenInput();
+  }
+
+  function removeTag(el, text) {
+    el.parentElement.remove();
+    skillSet = skillSet.filter(skill => skill !== text);
+    updateHiddenInput();
+  }
+
+  function updateHiddenInput() {
+    document.getElementById("skills-hidden").value = skillSet.join(";; ");
+  }
+
+  document.getElementById("tag-input").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        addTag();
+        console.log(skillSet)
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const today = new Date().toISOString().split("T")[0];
+    document.getElementById("deadline").setAttribute("min", today);
+  });
+</script>
 {% endblock %}

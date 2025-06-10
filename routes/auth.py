@@ -32,14 +32,14 @@ def signup():
         else:
             connection = get_connection()
             cur = connection.cursor()
-            cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+            cur.execute("SELECT * FROM user WHERE email = %s", (email,))
             if cur.fetchone():
                 error = "Email already registered!"
             else:
                 hashed_password = ph.hash(password)
                 cur.execute(
-                    "INSERT INTO users (name, email, password, role) VALUES (%s, %s, %s, %s)",
-                    (name, email, hashed_password, 'user')
+                    "INSERT INTO user (name, email, password, role) VALUES (%s, %s, %s, %s)",
+                    (name, email, hashed_password, 'candidate')
                 )
                 connection.commit()
                 cur.close()
@@ -58,7 +58,7 @@ def signin():
         password = request.form['password']
 
         cur = get_connection().cursor()
-        cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+        cur.execute("SELECT * FROM user WHERE email = %s", (email,))
         account = cur.fetchone()
         cur.close()
 
@@ -70,7 +70,7 @@ def signin():
                 session['user_role'] = account['role']
                 session['user_email'] = account['email']
 
-                return redirect(url_for('dashboard.dashboardhrd' if account['role'] == 'admin' else 'dashboard.dashboard_pelamar'))
+                return redirect(url_for('dashboard.dashboardhrd' if account['role'] == 'recruiter' else 'dashboard.dashboard_pelamar'))
             except:
                 error = "Invalid email or password!"
         else:

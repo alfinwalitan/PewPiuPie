@@ -13,7 +13,6 @@ h1 {
     color: #ffffff;
     background-color: #010645;
     border-radius: 15px;
-    font-size: 20px;
 }
 
 .center-container {
@@ -32,7 +31,7 @@ table {
 }
 
 th, td {
-    padding: 0.75rem 1rem;
+    padding: 8px 16px;
     text-align: center;
     line-height: 2.5;
     border-bottom: 1px solid #fafafa;
@@ -42,7 +41,7 @@ th, td {
 th {
     background-color: #010645;
     font-weight: 600;
-    font-size: 20px;
+    font-size: 18px;
 }
 
 td em {
@@ -50,6 +49,7 @@ td em {
 }
 
 .btn-detail {
+    left: -5px;
     background-color: #007bff;
     color: white;
     padding: 10px 18px;
@@ -61,6 +61,7 @@ td em {
     transition: background-color 0.3s;
     cursor: pointer;
     border: none;
+    white-space: nowrap;
 }
 
 .btn-detail:hover {
@@ -93,4 +94,33 @@ td em {
 
 .btn-group .btn-delete:hover{
     background-color: #c0392b;
+}
+
+.skill-container{
+    display: flex; 
+    gap: 8px; 
+    align-items: center;
+    padding: 18px 24px;
+    border: 1px solid #010645;
+    color: #ffffff;
+    background-color: #010645;
+    border-radius: 15px;
+}
+
+.tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.tag {
+    font-weight: 600;
+    background-color: #e0f0ff;
+    color: #333;
+    padding: 4px 12px 6px 12px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
 }

@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, jsonify
+from utils import skills_str_to_list, datetime_to_str
 from models.db_init import get_connection
 
 jobs_bp = Blueprint('jobs', __name__)
@@ -6,7 +7,7 @@ jobs_bp = Blueprint('jobs', __name__)
 # POST JOB
 @jobs_bp.route('/post-job', methods=['GET', 'POST'])
 def post_job():
-    if 'user_id' not in session or session.get('user_role') != 'admin':
+    if 'user_id' not in session or session.get('user_role') != 'recruiter':
         return redirect(url_for('auth.signin'))
 
     if request.method == 'POST':
@@ -21,7 +22,7 @@ def post_job():
         connection = get_connection()
         cur = connection.cursor()
         cur.execute("""
-            INSERT INTO jobs (job_title, experience, education, skills, location, deadline, posted_by)
+            INSERT INTO job_post (job_title, experience, education, skills, location, deadline, posted_by)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
         """, (job_title, experience, education, skills, location, deadline, posted_by))
         connection.commit()
@@ -35,12 +36,15 @@ def post_job():
 @jobs_bp.route("/job-detail/<int:job_id>")
 def job_detail(job_id):
     cur = get_connection().cursor()
-    cur.execute("SELECT * FROM jobs WHERE id = %s", (job_id,))
+    cur.execute("SELECT * FROM job_post WHERE id = %s", (job_id,))
     job = cur.fetchone()
     cur.close()
 
     if not job:
         return "Job not found", 404
+
+    job['skills'] = skills_str_to_list(job['skills'])
+    job['deadline'] = datetime_to_str(job['deadline'])
 
     # DUMMY DATA FOR TESTING
     candidates = [
@@ -65,7 +69,7 @@ def job_detail(job_id):
     ]
 
     role = session.get('user_role')
-    template = "jobdetail_hrd.jinja" if role == 'admin' else "jobdetail_pelamar.jinja"
+    template = "jobdetail_hrd.jinja" if role == 'recruiter' else "jobdetail_pelamar.jinja"
     return render_template(
         template,
         job=job,
@@ -77,18 +81,18 @@ def job_detail(job_id):
 # DELETE JOB
 @jobs_bp.route('/delete-job/<int:job_id>', methods=['DELETE'])
 def delete_job(job_id):
-    if 'user_id' not in session or session.get('user_role') not in ['admin', 'hrd']:
+    if 'user_id' not in session or session.get('user_role') != 'recruiter':
         return jsonify({'error': 'Unauthorized'}), 401
 
     connection = get_connection()
     cur = connection.cursor()
-    cur.execute("SELECT * FROM jobs WHERE id = %s", (job_id,))
+    cur.execute("SELECT * FROM job_post WHERE id = %s", (job_id,))
     job = cur.fetchone()
     if not job:
         cur.close()
         return jsonify({'error': 'Job not found'}), 404
 
-    cur.execute("DELETE FROM jobs WHERE id = %s", (job_id,))
+    cur.execute("DELETE FROM job_post WHERE id = %s", (job_id,))
     connection.commit()
     cur.close()
 
