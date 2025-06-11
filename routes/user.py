@@ -1,7 +1,24 @@
-from flask import Blueprint, request, session, jsonify, redirect, url_for, render_template
-from models.db_init import get_connection
+from flask import Blueprint, request, session, jsonify, redirect, url_for, render_template, flash
+from services.user_service import get_user, edit_profile
 
 user_bp = Blueprint('user', __name__)
+
+# GET USER NAME
+@user_bp.route('/get-user-info', methods=['GET'])
+def get_user_info():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+
+    user_id = session['user_id']
+    success, user = get_user(user_id)
+
+    if not success:
+        return jsonify({'error': "User Not Found"}), 404
+
+    return jsonify({
+        'name': user['name'],
+        'email': user['email']
+    })
 
 # EDIT PROFILE
 @user_bp.route('/update-name', methods=['POST'])
@@ -14,13 +31,12 @@ def update_name():
         return jsonify({'error': 'Name cannot be empty'}), 400
 
     user_id = session['user_id']
-    connection = get_connection()
-    cur = connection.cursor()
-    cur.execute("UPDATE users SET name = %s WHERE id = %s", (new_name, user_id))
-    connection.commit()
-    cur.close()
+    success, message = edit_profile(user_id, new_name)
+    if not success:
+        return jsonify({'error': message}), 500
     session['user_name'] = new_name
     return jsonify({'message': 'Name updated successfully', 'new_name': new_name})
+
 
 # APPLICATION HISTORY
 @user_bp.route('/applications')

@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, session, redirect, url_for
+from flask import Blueprint, render_template, session
 from utils import skills_str_to_comma, datetime_to_str
-from models.db_init import get_connection
+from services.job_post_service import get_active_jobs
 
 dashboard_bp = Blueprint('dashboard', __name__)
 
@@ -62,13 +62,10 @@ dashboard_bp = Blueprint('dashboard', __name__)
 # DASHBOARD USER
 @dashboard_bp.route('/')
 def dashboard():
-    cur = get_connection().cursor()
-    cur.execute("SELECT * FROM job_post ORDER BY posted_at DESC")
-    jobs = cur.fetchall()
+    jobs = get_active_jobs()
     for i in range(len(jobs)):
         jobs[i]['skills'] = skills_str_to_comma(jobs[i]['skills'])
         jobs[i]['deadline'] = datetime_to_str(jobs[i]['deadline'])
-    cur.close()
 
     return render_template(
         'dashboard.jinja',

@@ -43,34 +43,25 @@ def create_table():
         )
     """)
 
-    # Resume
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS resume (
-            id INT PRIMARY KEY AUTO_INCREMENT,
-            candidate_id INT,
-            file_path VARCHAR(255),
-            FOREIGN KEY (candidate_id) REFERENCES user(id)
-        )
-    """)
-
     # Resume Information
     cur.execute("""
         CREATE TABLE IF NOT EXISTS resume_information (
             id INT PRIMARY KEY AUTO_INCREMENT,
-            resume_id INT,
+            candidate_id INT,
+            file_path VARCHAR(255),
             name_res VARCHAR(100),
             designation VARCHAR(100),
             companies TEXT,
             location VARCHAR(100),
             email_res VARCHAR(100),
             techtools TEXT,
-            specskills TEXT,
+            jobskills TEXT,
             years_exp VARCHAR(50),
             softskill TEXT,
             college VARCHAR(100),
             graduation VARCHAR(10),
             degree VARCHAR(100),
-            FOREIGN KEY (resume_id) REFERENCES resume(id)
+            FOREIGN KEY (candidate_id) REFERENCES user(id) ON DELETE CASCADE
         )
     """)
 
@@ -86,7 +77,7 @@ def create_table():
             location VARCHAR(255) NOT NULL,
             deadline DATE NOT NULL,
             posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES user(id)
+            FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
         )
     """)
 
@@ -97,13 +88,14 @@ def create_table():
             resume_id INT,
             jobpost_id INT,
             candidate_id INT,
+            gdrive TEXT,
             status ENUM('Rejected', 'In Progress', 'Proceed To Interview'),
             score FLOAT,
-            recommendation ENUM('Hightly Suitable', 'Moderately Suitable', 'Not Suitable'),
-            application_date DATE,
-            FOREIGN KEY (resume_id) REFERENCES resume(id),
-            FOREIGN KEY (jobpost_id) REFERENCES job_post(id),
-            FOREIGN KEY (candidate_id) REFERENCES user(id)
+            recommendation ENUM('Highly Suitable', 'Moderately Suitable', 'Not Suitable'),
+            application_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (resume_id) REFERENCES resume_information(id) ON DELETE CASCADE,
+            FOREIGN KEY (jobpost_id) REFERENCES job_post(id) ON DELETE CASCADE,
+            FOREIGN KEY (candidate_id) REFERENCES user(id) ON DELETE CASCADE
         )
     """)
 
@@ -113,7 +105,7 @@ def create_table():
             id INT PRIMARY KEY AUTO_INCREMENT,
             application_id INT,
             explanation TEXT,
-            FOREIGN KEY (application_id) REFERENCES application(id)
+            FOREIGN KEY (application_id) REFERENCES application(id) ON DELETE CASCADE
         )
     """)
 
@@ -180,7 +172,7 @@ def insert_job_post():
                 'Software Engineer',
                 3,
                 'Bachelor of Computer Science',
-                'Detail Oriented;; data sharing;; VMware Horizon View 5.x;; 6.x;; and 7.x;; Microsoft Hyper-V;; Ticket Resolution;; IT consultation;; Mac;; Customer Service;; Project Management;; Windows;; Middleware Integration;; Software Documentation;; Creativity;; project planning;; budgeting;; design',
+                'Detail Oriented;; data sharing;; VMware Horizon View 5.x, 6.x, and 7.x;; Microsoft Hyper-V;; Ticket Resolution;; IT consultation;; Mac;; Customer Service;; Project Management;; Windows;; Middleware Integration;; Software Documentation;; Creativity;; project planning;; budgeting;; design',
                 'New York, NY',
                 '2025-12-31'
             );"""

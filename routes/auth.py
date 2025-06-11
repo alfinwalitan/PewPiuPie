@@ -1,10 +1,8 @@
 from flask import Blueprint, request, render_template, redirect, url_for, session
-from models.db_init import get_connection
-from argon2 import PasswordHasher
+from services.auth_service import get_email, create_user, authenticate_user
 import re
 
 auth_bp = Blueprint('auth', __name__)
-ph = PasswordHasher()
 
 # EMAIL VALIDATION
 def is_valid_email(email):
@@ -29,22 +27,14 @@ def signup():
             error = "Passwords do not match!"
         elif len(password) < 6:
             error = "Password must be at least 6 characters."
+        elif get_email(email) is not None:
+            error = "Email already registered!"
         else:
-            connection = get_connection()
-            cur = connection.cursor()
-            cur.execute("SELECT * FROM user WHERE email = %s", (email,))
-            if cur.fetchone():
-                error = "Email already registered!"
-            else:
-                hashed_password = ph.hash(password)
-                cur.execute(
-                    "INSERT INTO user (name, email, password, role) VALUES (%s, %s, %s, %s)",
-                    (name, email, hashed_password, 'candidate')
-                )
-                connection.commit()
-                cur.close()
+            success, message = create_user(name, email, password)
+            if success:
                 return redirect(url_for('auth.signin'))
-            cur.close()
+            else:
+                error = f"Error: {message}"
 
     return render_template('signup.jinja', error=error)
 
@@ -57,24 +47,18 @@ def signin():
         email = request.form['email'].strip()
         password = request.form['password']
 
-        cur = get_connection().cursor()
-        cur.execute("SELECT * FROM user WHERE email = %s", (email,))
-        account = cur.fetchone()
-        cur.close()
+        success, result = authenticate_user(email, password)
 
-        if account:
-            try:
-                ph.verify(account['password'], password)
-                session['user_id'] = account['id']
-                session['user_name'] = account['name']
-                session['user_role'] = account['role']
-                session['user_email'] = account['email']
+        if success:
+            account = result
+            session['user_id'] = account['id']
+            session['user_name'] = account['name']
+            session['user_role'] = account['role']
+            session['user_email'] = account['email']
 
-                return redirect(url_for('dashboard.dashboard'))
-            except:
-                error = "Invalid email or password!"
+            return redirect(url_for('dashboard.dashboard'))
         else:
-            error = "Invalid email or password!"
+            error = result
 
     return render_template('signin.jinja', error=error)
 

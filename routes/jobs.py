@@ -18,9 +18,9 @@ def post_job():
         skills = request.form['skills']
         location = request.form['location']
         deadline = request.form['deadline']
-        posted_by = session['user_id']
+        user_id = session['user_id']
 
-        success, message = insert_job_post(job_title, experience, education, skills, location, deadline, posted_by)
+        success, message = insert_job_post(job_title, experience, education, skills, location, deadline, user_id)
         if success:
             flash(message, "success")
             return redirect(url_for('dashboard.dashboard'))
@@ -70,7 +70,7 @@ def job_detail(job_id):
 
     role = session.get('user_role')
     candidates = candidates if role == 'recruiter' else None
-    print(candidates)
+
     return render_template(
         "jobdetail.jinja",
         job=job,
@@ -90,4 +90,5 @@ def delete_job(job_id):
     if not success:
         return jsonify({'error': message}), 404
 
+    flash(message, 'success')
     return jsonify({'message': message}), 200
