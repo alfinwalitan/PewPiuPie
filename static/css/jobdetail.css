@@ -6,7 +6,6 @@ h1 {
 
 .job-detail-container p {
     position: relative;
-    left: -5px;
     margin: 4px;
     padding: 18px 24px;
     border: 1px solid #010645;
@@ -45,7 +44,7 @@ h1 {
 
 table {
     width: 100%;
-    margin-top: 20px;
+    margin-top: 10px;
     border-collapse: collapse;
     color: #ffffff;
     border-radius: 15px;
@@ -95,7 +94,7 @@ td em {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 10px;
 }
 
 .btn-group{
@@ -120,9 +119,10 @@ td em {
 }
 
 .skill-container{
-    display: flex; 
-    gap: 8px; 
-    align-items: center;
+    display: flex;
+    gap: 16px;
+    position: relative;
+    margin: 4px;
     padding: 18px 24px;
     border: 1px solid #010645;
     color: #ffffff;
@@ -134,7 +134,6 @@ td em {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 8px;
 }
 
 .tag {

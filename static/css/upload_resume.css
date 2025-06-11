@@ -101,3 +101,33 @@ input[type="text"] {
 .clear-button:hover {
     color: #e00;
 }
+
+input::placeholder {
+    font-style: italic;
+    color: #888;
+}
+
+.flash-messages {
+  position: fixed;
+  top: 70px;
+  right: 10px;
+  z-index: 1000;
+}
+
+.flash-message {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  font-weight: 600;
+}
+
+.flash-message.error {
+  background-color: #f44336;
+}
+
+.flash-message.warning {
+  background-color: #ff9800;
+}

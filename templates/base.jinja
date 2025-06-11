@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Jobbers{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     {% block extra_css %}{% endblock %}
 </head>
@@ -16,7 +17,7 @@
             {% endif %}
             
             {% if user_role %}
-                <span class="btn-nav user-icon" id="userIcon">👤 {{ user_name }}</span>
+                <span class="btn-nav user-icon" id="userIcon" data-bs-toggle="modal" data-bs-target="#userModal">👤 {{ user_name }}</span>
             {%else%}
                 <a href="{{ url_for('auth.signin') }}" class="btn-nav signin">Sign In</a>
                 <a href="{{ url_for('auth.signup') }}" class="btn-nav signup">Sign Up</a>
@@ -28,71 +29,65 @@
         {% block content %}{% endblock %}
     </div>
 
-    <div id="userModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" id="closeModal">&times;</span>
-
-            <div class="modal-header">
-                <h2>Profile</h2>
-            </div>
-
-            <div class="modal-body">
-                {% if user_role == "candidate" %}
-                    <form id="editNameForm" method="POST" action="{{ url_for('user.update_name') }}">
-                        <input type="hidden" name="user_id" value="{{ user_id }}">
-
-                        <label for="name">Username</label>
-                        <input type="text" id="name" name="name" value="{{ user_name }}" required>
-
-                        <label for="email">Email</label>
-                        <input type="text" id="email" name="email" value="{{ user_email }}" disabled>
-
-                        <div class="modal-footer">
-                            <button type="submit" class="save-btn">Save</button>
-                            <a href="{{ url_for('auth.logout') }}" class="logout-btn">Log Out</a>
-                        </div>
-                    </form>
-                {% elif user_role == "recruiter" %}
-                    <form id="editNameForm">
-                        <input type="hidden" name="user_id" value="{{ user_id }}">
-
-                        <label for="name">Username</label>
-                        <input type="text" id="name" name="name" value="{{ user_name }}" disabled>
-
-                        <label for="email">Email</label>
-                        <input type="text" id="email" name="email" value="{{ user_email }}" disabled>
-
-                        <div class="modal-footer" style="justify-content: center;">
-                            <a href="{{ url_for('auth.logout') }}" class="logout-btn">Log Out</a>
-                        </div>
-                    </form>
-                {% endif %}
-
-                <div id="successMessage">Saved Succesfully!</div>
+    <div id="userModal" class="modal fade">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #001f4d;">
+                    <h3 class="modal-title w-100 text-center m-0" style="color: white;">Profile</h3>
+                    <button type="button" class="btn-close white-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="background-color: #f0f0f0;">
+                    {% if user_role == "candidate" %}
+                        <form id="editNameForm" method="POST" action="{{ url_for('user.update_name') }}">
+                            <input type="hidden" name="user_id" value="{{ user_id }}">
+                            <label for="name">Username</label>
+                            <input type="text" id="name" name="name" value="{{ user_name }}" required>
+                            <label for="email">Email</label>
+                            <input type="text" id="email" name="email" value="{{ user_email }}" disabled>
+                            <div class="modal-footer p-0 d-flex justify-content-between align-items-center">
+                                <a href="{{ url_for('auth.logout') }}" class="logout-btn">Log Out</a>
+                                <button type="submit" class="save-btn">Save</button>
+                            </div>
+                        </form>
+                    {% elif user_role == "recruiter" %}
+                        <form id="editNameForm">
+                            <input type="hidden" name="user_id" value="{{ user_id }}">
+                            <label for="name">Username</label>
+                            <input type="text" id="name" name="name" value="{{ user_name }}" disabled>
+                            <label for="email">Email</label>
+                            <input type="text" id="email" name="email" value="{{ user_email }}" disabled>
+                            <div class="modal-footer pb-0" style="justify-content: center;">
+                                <a href="{{ url_for('auth.logout') }}" class="logout-btn">Log Out</a>
+                            </div>
+                        </form>
+                    {% endif %}
+                    <div id="successMessage">Saved Succesfully!</div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const modal = document.getElementById('userModal');
+        const name = document.getElementById('name');
+        const email = document.getElementById('email');
         const userIcon = document.getElementById('userIcon');
-        const closeBtn = document.getElementById('closeModal');
         const successMessage = document.getElementById('successMessage');
 
         userIcon.addEventListener('click', () => {
-            modal.classList.add('show');
-        });
-
-        closeBtn.addEventListener('click', () => {
-            modal.classList.remove('show');
-            successMessage.style.display = 'none';
-        });
-
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('show');
-                successMessage.style.display = 'none';
+            fetch('/get-user-info')
+            .then(res => res.json())
+            .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                name.value = data.name;
+                email.value = data.email;
             }
+            })
+            .catch(err => {
+            alert("Failed to load user info");
+            console.error(err);
+            });
         });
 
         document.getElementById('editNameForm').addEventListener('submit', function (e) {
@@ -116,8 +111,9 @@
 
                     setTimeout(() => {
                         successMessage.style.display = 'none';
-                        modal.classList.remove('show');
-                    }, 2000);
+                        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('userModal'));
+                        modal.hide();
+                    }, 3000);
                 }
             })
             .catch(err => {
@@ -125,6 +121,7 @@
             });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     {% block extra_js %}{% endblock %}
 </body>

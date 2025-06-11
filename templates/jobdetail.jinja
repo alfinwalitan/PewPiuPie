@@ -12,7 +12,7 @@
   <h1>Job Description</h1>
   {% if user_role == "recruiter" %}
     <div class="btn-group">
-        <button id="btn-delete-job" class="btn-delete" data-job-id="{{ job.id }}">Delete Job</button>
+        <button id="btn-delete-job" class="btn-delete" data-job-id="{{ job.id }}" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Job</button>
     </div>
   {%endif%}
 </div>
@@ -28,7 +28,7 @@
     </p>
     <p><strong>Education Requirement : </strong> {{ job.education }}</p>
     <div class="skill-container" >
-        <strong style="white-space: nowrap; align-self:flex-start; margin-top: 8px">Skills : </strong>
+        <strong style="white-space: nowrap; align-self:flex-start;">Skills : </strong>
         <div class="tag-container" id="skill-tag-list">
             {% for skill in job.skills %}
               <div class="tag">{{ skill }}</div>
@@ -67,39 +67,70 @@
         {% endfor %}
     </tbody>
 </table>
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #001f4d;">
+        <h3 class="modal-title w-100 text-center m-0" id="deleteModalLabel" style="color: white;">Confirm Delete</h3>
+        <button type="button" class="btn-close white-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="background-color: #f0f0f0;">
+        Are you sure you want to delete this job?
+      </div>
+      <div class="modal-footer" style="background-color: #f0f0f0;">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button id="confirmDeleteBtn" type="button" class="btn btn-danger">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
 {%else%}
 <div class="center-container">
     <a href="{{ url_for('resume.upload_resume', job_id=job.id) }}" class="btn btn-primary upload-btn">Upload Resume</a>
 </div>
 {%endif%}
+{% endblock %}
 
+{% block extra_js%}
 <script>
-document.getElementById('btn-delete-job').addEventListener('click', function() {
-    const jobId = this.getAttribute('data-job-id');
-    if (confirm('Are you sure want to delete this job?')) {
-        fetch(`/delete-job/${jobId}`, {
-            method: 'DELETE',
-            credentials: 'include'
-        })
-        .then(response => {
-            if (!response.ok) {
-                if (response.status === 401) {
-                    alert('Unauthorized: Only Admin/HRD can delete job.');
-                } else if (response.status === 404) {
-                    alert('Job not found.');
-                } else {
-                    alert('Failed to delete job.');
-                }
-                throw new Error('Delete failed');
-            }
-            return response.json();
-        })
-        .then(data => {
-            alert(data.message);
-            window.location.href = "/dashboard";
-        })
-        .catch(error => console.error(error));
+let jobIdToDelete = null;
+
+var deleteModal = document.getElementById('deleteModal');
+
+deleteModal.addEventListener('show.bs.modal', function (event) {
+  const button = event.relatedTarget;
+  jobIdToDelete = button.getAttribute('data-job-id');
+});
+
+// On confirm delete
+document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+  if (!jobIdToDelete) return;
+
+  fetch(`/delete-job/${jobIdToDelete}`, {
+    method: 'DELETE',
+    credentials: 'include'
+  })
+  .then(response => {
+    if (!response.ok) {
+      if (response.status === 401) {
+        alert('Unauthorized: Only Admin/HRD can delete job.');
+      } else if (response.status === 404) {
+        alert('Job not found.');
+      } else {
+        alert('Failed to delete job.');
+      }
+      throw new Error('Delete failed');
     }
+    return response.json();
+  })
+  .then(data => {
+    if (data.error) {
+        alert('Error: ' + data.error);
+    } else {
+        window.location.href = "/";
+    }
+  })
+  .catch(error => console.error(error));
 });
 </script>
 

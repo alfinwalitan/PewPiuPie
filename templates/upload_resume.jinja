@@ -9,6 +9,15 @@
 
 {% block content %}
 <main class="upload-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
     <h2>Upload Your Resume</h2>
     <form action="{{ url_for('resume.upload_resume', job_id=job.id) }}" method="POST" enctype="multipart/form-data">
         <div class="form-section">
@@ -17,7 +26,7 @@
                 type="file"
                 id="resumeUpload"
                 name="resumeUpload"
-                accept=".pdf, .doc, .docx"
+                accept=".pdf"
             />
             <button type="button" class="insert-button" id="insertResumeBtn">
                 <i class="fa-solid fa-upload"></i> Insert Resume
@@ -30,8 +39,8 @@
         </div>
 
         <div class="form-section">
-            <label for="gdriveLink">Other Files (Google Drive Folder Link):</label>
-            <input type="text" id="gdriveLink" name="gdriveLink" placeholder="Google Drive Folder Link">
+            <label for="gdriveLink">Supporting Files (Google Drive Folder) [Optional]:</label>
+            <input type="text" id="gdriveLink" name="gdriveLink" placeholder="Enter shared Google Drive folder link">
         </div>
 
         <div class="form-section upload-button-container">
@@ -72,6 +81,17 @@
                 uploadedFilesContainer.appendChild(fileEntry);
             }
         });
+
+        setTimeout(() => {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(msg => {
+                msg.style.transition = 'opacity 0.5s ease';
+                msg.style.opacity = '0';
+                setTimeout(() => {
+                msg.style.display = 'none';
+                }, 500);
+            });
+        }, 5000);
     </script>
 </main>
 {% endblock %}

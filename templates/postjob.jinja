@@ -17,7 +17,7 @@
         <div class="alert alert-success">{{ success }}</div>
     {% endif %}
 
-    <form method="POST" action="{{ url_for('jobs.post_job') }}">
+    <form id="postJobForm" method="POST" action="{{ url_for('jobs.post_job') }}">
         <label>Job Title:</label>
         <input type="text" name="job_title" placeholder="Enter job title (e.g. Software Engineer)" required>
 
@@ -34,7 +34,7 @@
                 <button type="button" onclick="addTag()" style="padding: 6px 12px; margin-top: 0px">Add</button>
             </div>
             <div class="tag-container" id="tag-list"></div>
-            <input type="hidden" name="skills" id="skills-hidden">
+            <input type="hidden" name="skills" id="skills-hidden" required>
         </div>
 
         <label>Location:</label>
@@ -66,6 +66,8 @@
 
     input.value = "";
     updateHiddenInput();
+
+    input.setCustomValidity('');
   }
 
   function removeTag(el, text) {
@@ -75,7 +77,7 @@
   }
 
   function updateHiddenInput() {
-    document.getElementById("skills-hidden").value = skillSet.join(";; ");
+    document.getElementById('skills-hidden').value = skillSet.join(";; ");
   }
 
   document.getElementById("tag-input").addEventListener("keydown", function(e) {
@@ -89,6 +91,22 @@
   document.addEventListener("DOMContentLoaded", function () {
     const today = new Date().toISOString().split("T")[0];
     document.getElementById("deadline").setAttribute("min", today);
+  });
+
+  document.getElementById('postJobForm').addEventListener('submit', function (e) {
+    updateHiddenInput();
+
+    const skillsInput = document.getElementById('skills-hidden');
+    const validatorInput = document.getElementById('tag-input');
+    const skills = skillsInput.value.trim();
+
+    if (!skills) {
+      validatorInput.setCustomValidity('Please add at least one skill');
+      validatorInput.reportValidity();
+      e.preventDefault();
+    } else {
+      validatorInput.setCustomValidity('');
+    }
   });
 </script>
 {% endblock %}
