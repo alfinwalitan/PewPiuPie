@@ -49,6 +49,16 @@ header {
     transition: background-color 0.3s ease;
 }
 
+.menu .signin {
+    border-radius: 20px;
+    padding: 4px 12px 6px 12px;
+}
+
+.menu .signup{
+    border-radius: 20px;
+    padding: 4px 12px 6px 12px;
+}
+
 .user-icon {
     font-size: 18px;
 }
@@ -92,7 +102,7 @@ header {
 }
 
 .modal-body {
-    margin: 20px 0;
+    margin: 20px 0 10px 0;
 }
 
 label {

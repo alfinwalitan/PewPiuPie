@@ -2,17 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Jobbers - Pelamar{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base_pelamar.css') }}">
+    <title>{% block title %}Jobbers{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <header>
         <div class="logo">Jobbers</div>
         <div class="menu">
-            <a href="{{ url_for('dashboard.dashboard_pelamar') }}" class="btn-nav {% if active_page == 'dashboard' %}active{% endif %}">🏠 Dashboard</a>
-            <a href="{{ url_for('user.application_history') }}" class="btn-nav {% if active_page == 'applications' %}active{% endif %}">📄 My Application</a>
-            <span class="btn-nav user-icon" id="userIcon">👤 {{ user_name }}</span>
+            <a href="{{ url_for('dashboard.dashboard') }}" class="btn-nav {% if active_page == 'dashboard' %}active{% endif %}">🏠 Dashboard</a>
+            {% if user_role == "candidate" %}
+                <a href="{{ url_for('user.application_history') }}" class="btn-nav {% if active_page == 'applications' %}active{% endif %}">📄 My Application</a>
+            {% endif %}
+            
+            {% if user_role %}
+                <span class="btn-nav user-icon" id="userIcon">👤 {{ user_name }}</span>
+            {%else%}
+                <a href="{{ url_for('auth.signin') }}" class="btn-nav signin">Sign In</a>
+                <a href="{{ url_for('auth.signup') }}" class="btn-nav signup">Sign Up</a>
+            {% endif %}
         </div>
     </header>
 
@@ -29,20 +37,36 @@
             </div>
 
             <div class="modal-body">
-                <form id="editNameForm" method="POST" action="{{ url_for('user.update_name') }}">
-                    <input type="hidden" name="user_id" value="{{ user_id }}">
+                {% if user_role == "candidate" %}
+                    <form id="editNameForm" method="POST" action="{{ url_for('user.update_name') }}">
+                        <input type="hidden" name="user_id" value="{{ user_id }}">
 
-                    <label for="name">Username</label>
-                    <input type="text" id="name" name="name" value="{{ user_name }}" required>
+                        <label for="name">Username</label>
+                        <input type="text" id="name" name="name" value="{{ user_name }}" required>
 
-                    <label for="email">Email</label>
-                    <input type="text" id="email" name="email" value="{{ user_email }}" disabled>
+                        <label for="email">Email</label>
+                        <input type="text" id="email" name="email" value="{{ user_email }}" disabled>
 
-                    <div class="modal-footer">
-                        <button type="submit" class="save-btn">Save</button>
-                        <a href="{{ url_for('auth.logout') }}" class="logout-btn">Log Out</a>
-                    </div>
-                </form>
+                        <div class="modal-footer">
+                            <button type="submit" class="save-btn">Save</button>
+                            <a href="{{ url_for('auth.logout') }}" class="logout-btn">Log Out</a>
+                        </div>
+                    </form>
+                {% elif user_role == "recruiter" %}
+                    <form id="editNameForm">
+                        <input type="hidden" name="user_id" value="{{ user_id }}">
+
+                        <label for="name">Username</label>
+                        <input type="text" id="name" name="name" value="{{ user_name }}" disabled>
+
+                        <label for="email">Email</label>
+                        <input type="text" id="email" name="email" value="{{ user_email }}" disabled>
+
+                        <div class="modal-footer" style="justify-content: center;">
+                            <a href="{{ url_for('auth.logout') }}" class="logout-btn">Log Out</a>
+                        </div>
+                    </form>
+                {% endif %}
 
                 <div id="successMessage">Saved Succesfully!</div>
             </div>

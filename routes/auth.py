@@ -70,7 +70,7 @@ def signin():
                 session['user_role'] = account['role']
                 session['user_email'] = account['email']
 
-                return redirect(url_for('dashboard.dashboardhrd' if account['role'] == 'recruiter' else 'dashboard.dashboard_pelamar'))
+                return redirect(url_for('dashboard.dashboard'))
             except:
                 error = "Invalid email or password!"
         else:

@@ -1,18 +1,20 @@
-{% extends "base_hrd.jinja" %}
+{% extends "base.jinja" %}
 
-{% block title %}Job Description - HRD{% endblock %}
+{% block title %}Job Description{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/jobdetail_hrd.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jobdetail.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 {% endblock %}
 
 {% block content %}
 <div class="header-with-button">
   <h1>Job Description</h1>
-  <div class="btn-group">
-      <button id="btn-delete-job" class="btn-delete" data-job-id="{{ job.id }}">Delete Job</button>
-  </div>
+  {% if user_role == "recruiter" %}
+    <div class="btn-group">
+        <button id="btn-delete-job" class="btn-delete" data-job-id="{{ job.id }}">Delete Job</button>
+    </div>
+  {%endif%}
 </div>
 
 <div class="job-detail-container">
@@ -37,6 +39,7 @@
     <p><strong>Application Deadline : </strong> {{ job.deadline }}</p>
 </div>
 
+{% if user_role == "recruiter" %}
 <h1>Candidates</h1>
 <table>
     <thead>
@@ -64,6 +67,11 @@
         {% endfor %}
     </tbody>
 </table>
+{%else%}
+<div class="center-container">
+    <a href="{{ url_for('resume.upload_resume', job_id=job.id) }}" class="btn btn-primary upload-btn">Upload Resume</a>
+</div>
+{%endif%}
 
 <script>
 document.getElementById('btn-delete-job').addEventListener('click', function() {
@@ -88,7 +96,7 @@ document.getElementById('btn-delete-job').addEventListener('click', function() {
         })
         .then(data => {
             alert(data.message);
-            window.location.href = "/dashboardhrd";
+            window.location.href = "/dashboard";
         })
         .catch(error => console.error(error));
     }

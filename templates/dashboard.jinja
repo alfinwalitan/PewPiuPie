@@ -1,15 +1,20 @@
-{% extends "base_pelamar.jinja" %}
+{% extends "base.jinja" %}
 
-{% block title %}Dashboard - Pelamar{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_pelamar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 {% endblock %}
 
 {% block content %}
-  <h1>Recruitment Dashboard</h1>
-  <p class='welcome-text'>Welcome Back, {{ user_name }}!</p>
+  {% if user_role == "recruiter" %}
+    <a href="/post-job" class="post-job-btn">+ Post New Job</a>
+  {% endif %}
+  <h1>Find Your <span class="highlight">Dream Job</span> Today!</h1>
+  {% if user_name %}
+    <p class='welcome-text'>Welcome Back, {{ user_name }}!</p>
+  {%endif%}
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       <div class="flash-messages">

@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, session, redirect, url_for, jsonify, flash
 from utils import skills_str_to_list, datetime_to_str
+from services.job_post_service import get_job_post, insert_job_post, delete_job_by_id
 from models.db_init import get_connection
-from services.job_post_service import get_job_post
 
 jobs_bp = Blueprint('jobs', __name__)
 
@@ -20,18 +20,20 @@ def post_job():
         deadline = request.form['deadline']
         posted_by = session['user_id']
 
-        connection = get_connection()
-        cur = connection.cursor()
-        cur.execute("""
-            INSERT INTO job_post (job_title, experience, education, skills, location, deadline, posted_by)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (job_title, experience, education, skills, location, deadline, posted_by))
-        connection.commit()
-        cur.close()
+        success, message = insert_job_post(job_title, experience, education, skills, location, deadline, posted_by)
+        if success:
+            flash(message, "success")
+            return redirect(url_for('dashboard.dashboard'))
+        else:
+            flash(f"Error: {message}", "error")
+            return redirect(request.url)
 
-        return redirect(url_for('dashboard.dashboardhrd'))
-
-    return render_template('postjob.jinja', user_name=session.get('user_name'))
+    return render_template(
+        'postjob.jinja', 
+        user_name=session.get('user_name'),
+        user_email=session.get('user_email'),
+        user_role = session.get('user_role')
+    )
 
 # JOB DETAIL
 @jobs_bp.route("/job-detail/<int:job_id>/")
@@ -67,13 +69,15 @@ def job_detail(job_id):
     ]
 
     role = session.get('user_role')
-    template = "jobdetail_hrd.jinja" if role == 'recruiter' else "jobdetail_pelamar.jinja"
+    candidates = candidates if role == 'recruiter' else None
+    print(candidates)
     return render_template(
-        template,
+        "jobdetail.jinja",
         job=job,
         candidates=candidates,
         user_name=session.get('user_name'),
-        user_email=session.get('user_email')
+        user_email=session.get('user_email'),
+        user_role = session.get('user_role')
     )
 
 # DELETE JOB
@@ -82,16 +86,8 @@ def delete_job(job_id):
     if 'user_id' not in session or session.get('user_role') != 'recruiter':
         return jsonify({'error': 'Unauthorized'}), 401
 
-    connection = get_connection()
-    cur = connection.cursor()
-    cur.execute("SELECT * FROM job_post WHERE id = %s", (job_id,))
-    job = cur.fetchone()
-    if not job:
-        cur.close()
-        return jsonify({'error': 'Job not found'}), 404
+    success, message = delete_job_by_id(job_id)
+    if not success:
+        return jsonify({'error': message}), 404
 
-    cur.execute("DELETE FROM job_post WHERE id = %s", (job_id,))
-    connection.commit()
-    cur.close()
-
-    return jsonify({'message': 'Job deleted successfully'})
+    return jsonify({'message': message}), 200

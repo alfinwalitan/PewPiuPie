@@ -43,7 +43,7 @@ def upload_resume(job_id):
             )
             print(result)
             flash(f'File "{filename}" uploaded successfully!', 'success')
-            return redirect(url_for('dashboard.dashboard_pelamar'))
+            return redirect(url_for('dashboard.dashboard'))
         else:
             flash('File type not allowed', 'error')
             return redirect(request.url)
@@ -52,7 +52,8 @@ def upload_resume(job_id):
         "upload_resume.jinja",
         job = job,
         user_name=session.get('user_name'),
-        user_email=session.get('user_email')
+        user_email=session.get('user_email'),
+        user_role=session.get('user_role')
     )
 
 # VIEW RESUME
@@ -74,5 +75,6 @@ def view_resume():
     "view_resume.jinja",
     user_name=session.get('user_name'),
     user_email=session.get('user_email'),
+    user_role=session.get('user_role'),
     candidate=candidate,
 )

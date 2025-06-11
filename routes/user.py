@@ -48,5 +48,6 @@ def application_history():
     applications=applications,
     user_name=session.get('user_name'),
     user_email=session.get('user_email'),
+    user_role=session.get('user_role'),
     active_page='applications'
 )
