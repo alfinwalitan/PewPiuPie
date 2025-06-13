@@ -12,7 +12,7 @@
         <section class="resume-section">
             <h1>Candidate’s Resume</h1>
             <div class="resume-card">
-                <iframe src="{{ url_for('static', filename= candidate.filepath) }}#view=FitH" width="100%" height="500px"></iframe>
+                <iframe src="{{ url_for('static', filename= candidate.filepath) }}#view=FitH&page=1" width="100%" height="500px"></iframe>
             </div>
         </section>
 
@@ -183,14 +183,14 @@
     </div>
 </main>
 <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
     <div class="modal-content">
       <div class="modal-header" style="background-color: #001f4d;">
         <h3 class="modal-title w-100 text-center m-0" id="deleteModalLabel" style="color: white;">Set Candidate Status</h3>
         <button type="button" class="btn-close white-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" style="background-color: #f0f0f0;">
-        <p style="margin: 0;font-size: 20px;font-weight: 500">Approve this candidate to move to the next stage?</p>
+        <p style="margin: 0;font-size: 17px;font-weight: 500">Approve this candidate to move to the next stage?</p>
       </div>
       <div class="modal-footer justify-content-between" style="background-color: #f0f0f0;">
         <button id="confirmRejectBtn" type="button" class="btn btn-danger" data-bs-dismiss="modal">No, Reject</button>

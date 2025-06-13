@@ -7,8 +7,8 @@
 {% endblock %}
 
 {% block content %}
-    <h1>My Application</h1>
-    <p class="subtitle">Help users track the status of their job applications.</p>
+    <h1 style="margin-bottom: 0;">My Applications</h1>
+    <p class="subtitle">Monitor the status of your submitted job applications.</p>
 
     <table>
         <thead>
@@ -22,16 +22,44 @@
         <tbody>
             {% for app in applications %}
             <tr>
-                <td>{{ app.designation }}</td>
-                <td>{{ app.upload_date }}</td>
+                <td>{{ app.job_title }}</td>
+                <td>{{ app.application_date }}</td>
                 <td>{{ app.status }}</td>
                 <td>
-                    <a href="{{ app.resume_link }}">
-                        <button class="btn">Preview Resume</button>
+                    <a href="#" class="view-btn view-resume-btn" data-bs-toggle="modal" data-bs-target="#pdfModal" data-filepath="{{app.file_path}}" data-filename="{{app.filename}}">
+                        View Resume
                     </a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header" style="background-color: #001f4d;">
+                <h4 class="modal-title w-100 text-center m-0" id="pdfModalLabel" style="color: white;"></h4>
+                <button type="button" class="btn-close white-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="height: 80vh;">
+                <iframe id="pdfFrame" src="" style="width: 100%; height: 100%;" frameborder="0"></iframe>
+            </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+    document.querySelectorAll(".view-resume-btn").forEach(button => {
+        button.addEventListener("click", function (event) {
+            const filepath = this.getAttribute("data-filepath");
+            const filename = this.getAttribute("data-filename");
+            const frame = document.getElementById('pdfFrame');
+            const modalTitle = document.getElementById("pdfModalLabel");
+            frame.src = filepath;
+            modalTitle.textContent = filename
+        });
+    });
+</script>
+{%endblock%}

@@ -49,6 +49,7 @@ def create_table():
             id INT PRIMARY KEY AUTO_INCREMENT,
             candidate_id INT,
             file_path VARCHAR(255),
+            filename VARCHAR(100),
             name_res VARCHAR(100),
             email_res VARCHAR(100),
             designation TEXT,

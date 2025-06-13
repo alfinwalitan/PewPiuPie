@@ -16,16 +16,17 @@ def get_resume(res_id):
     except Exception as e:
         return False, str(e)
     
-def insert_resume(res_info, filepath, user_id, name, email):
+def insert_resume(res_info, filepath, filename, user_id, name, email):
     try:
         connection = get_connection()
         cur = connection.cursor()
 
         cur.execute(
-            "INSERT INTO resume_information (candidate_id, file_path, name_res, designation, companies, location, email_res, techtools, jobskills, years_exp, softskill, college, graduation, degree) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            "INSERT INTO resume_information (candidate_id, file_path, filename, name_res, designation, companies, location, email_res, techtools, jobskills, years_exp, softskill, college, graduation, degree) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
             (
                 user_id,
                 filepath,
+                filename,
                 name, 
                 json.dumps(res_info["Designation"]), 
                 json.dumps(res_info["Companies worked at"]),

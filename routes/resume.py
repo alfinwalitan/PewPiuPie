@@ -69,6 +69,7 @@ def upload_resume(job_id):
                 resume_success, res_id = insert_resume(
                     res_info=result['Resume Information'],
                     filepath=filepath,
+                    filename=filename,
                     user_id=user_id,
                     name=session['user_name'],
                     email=session['user_email']

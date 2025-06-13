@@ -1,5 +1,6 @@
 from flask import Blueprint, request, session, jsonify, redirect, url_for, render_template, flash
-from services.user_service import get_user, edit_profile
+from services.user_service import get_user, edit_profile, get_user_applications
+from utils import datetime_to_str
 
 user_bp = Blueprint('user', __name__)
 
@@ -41,24 +42,18 @@ def update_name():
 # APPLICATION HISTORY
 @user_bp.route('/applications')
 def application_history():
-    if 'user_id' not in session:
+    if 'user_id' not in session or session.get('user_role') != 'candidate':
         return redirect(url_for('auth.signin'))
+    
+    user_id = session.get('user_id')
+    success, applications = get_user_applications(user_id)
 
-    # DUMMY DATA FOR TESTING
-    applications = [
-        {
-            "designation": "System Engineer",
-            "upload_date": "13 April 2025",
-            "status": "In Progress",
-            "resume_link": "#"
-        },
-        {
-            "designation": "Machine Learning Engineer",
-            "upload_date": "19 January 2025",
-            "status": "Proceed to Interview",
-            "resume_link": "#"
-        },
-    ]
+    if not success:
+        return jsonify({'error': applications}), 404
+    
+    for app in applications:
+        app['application_date'] = datetime_to_str(app['application_date'])
+
     return render_template(
     "application.jinja",
     applications=applications,
