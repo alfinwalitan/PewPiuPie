@@ -50,17 +50,17 @@ def create_table():
             candidate_id INT,
             file_path VARCHAR(255),
             name_res VARCHAR(100),
-            designation VARCHAR(100),
-            companies TEXT,
-            location VARCHAR(100),
             email_res VARCHAR(100),
+            designation TEXT,
+            companies TEXT,
+            location TEXT,
             techtools TEXT,
             jobskills TEXT,
-            years_exp VARCHAR(50),
+            years_exp TEXT,
             softskill TEXT,
-            college VARCHAR(100),
-            graduation VARCHAR(10),
-            degree VARCHAR(100),
+            college TEXT,
+            graduation TEXT,
+            degree TEXT,
             FOREIGN KEY (candidate_id) REFERENCES user(id) ON DELETE CASCADE
         )
     """)
@@ -89,23 +89,14 @@ def create_table():
             jobpost_id INT,
             candidate_id INT,
             gdrive TEXT,
-            status ENUM('Rejected', 'In Progress', 'Proceed To Interview'),
+            status ENUM('Rejected', 'In Progress', 'Proceed'),
             score FLOAT,
             recommendation ENUM('Highly Suitable', 'Moderately Suitable', 'Not Suitable'),
+            explanation TEXT,
             application_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (resume_id) REFERENCES resume_information(id) ON DELETE CASCADE,
             FOREIGN KEY (jobpost_id) REFERENCES job_post(id) ON DELETE CASCADE,
             FOREIGN KEY (candidate_id) REFERENCES user(id) ON DELETE CASCADE
-        )
-    """)
-
-    # XAI
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS xai (
-            id INT PRIMARY KEY AUTO_INCREMENT,
-            application_id INT,
-            explanation TEXT,
-            FOREIGN KEY (application_id) REFERENCES application(id) ON DELETE CASCADE
         )
     """)
 

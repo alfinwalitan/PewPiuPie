@@ -8,6 +8,15 @@
 {% endblock %}
 
 {% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}
 <div class="header-with-button">
   <h1>Job Description</h1>
   {% if user_role == "recruiter" %}
@@ -27,7 +36,7 @@
         {%endif%}
     </p>
     <p><strong>Education Requirement : </strong> {{ job.education }}</p>
-    <div class="skill-container" >
+    <div class="bg-container" >
         <strong style="white-space: nowrap; align-self:flex-start;">Skills : </strong>
         <div class="tag-container" id="skill-tag-list">
             {% for skill in job.skills %}
@@ -41,32 +50,51 @@
 
 {% if user_role == "recruiter" %}
 <h1>Candidates</h1>
+{% if applications %}
 <table>
     <thead>
         <tr>
             <th>Name</th>
-            <th>Designation</th>
+            <th>Email</th>
             <th>Experiences</th>
-            <th>Skills</th>
-            <th>Score</th>
             <th>System Recommendation</th>
+            <th>Score</th>
+            <th>Status</th>
             <th>Detail</th>
         </tr>
     </thead>
     <tbody>
-        {% for candidate in candidates %}
+        {% for application in applications %}
         <tr>
-            <td>{{ candidate.name }}</td>
-            <td>{{ candidate.designation }}</td>
-            <td style="white-space: nowrap;">{{ candidate.experience }}</td>
-            <td>{{ candidate.skills }}</td>
-            <td>{{ candidate.score }}</td>
-            <td>{{ candidate.recommendation }}</td>
-            <td><a href="{{ url_for('resume.view_resume')}}" class="btn-detail">View Detail</a></td>
+            <td>{{ application.name }}</td>
+            <td>{{ application.email }}</td>
+            <td>
+              <div class="limited-td" title="{{ application.designation | join(', ') }}">
+                {% if not application.designation %}
+                  <p>-</p>
+                {%endif%}
+                <ul class="unstyled-list">
+                  {% for des in application.designation %}
+                    <li>{{ des }}</li>
+                  {%endfor%}
+                </ul>
+              </div>
+            </td>
+            <td>{{ application.recommendation }}</td>
+            <td>{{ application.score }}</td>
+            <td style="white-space: nowrap;">{{ application.status }}</td>
+            <td><a href="{{ url_for('resume.view_resume', application_id=application.id)}}" class="btn-detail">View Detail</a></td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+{%else%}
+<div class="bg-container" style="background-color: black; opacity: 0.51">
+  <h2 class="w-100 text-center m-0 text-white">
+    No Candidate Yet
+  </h2>
+</div>
+{%endif%}
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-sm">
     <div class="modal-content">
@@ -132,6 +160,17 @@ document.getElementById('confirmDeleteBtn').addEventListener('click', function (
   })
   .catch(error => console.error(error));
 });
+
+setTimeout(() => {
+    const flashMessages = document.querySelectorAll('.flash-message');
+    flashMessages.forEach(msg => {
+        msg.style.transition = 'opacity 0.5s ease';
+        msg.style.opacity = '0';
+        setTimeout(() => {
+        msg.style.display = 'none';
+        }, 500);
+    });
+}, 5000);
 </script>
 
 {% endblock %}

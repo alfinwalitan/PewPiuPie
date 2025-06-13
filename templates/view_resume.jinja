@@ -1,4 +1,4 @@
-{% extends 'base_hrd.jinja' %}
+{% extends 'base.jinja' %}
 
 {% block title %}Resume Review{% endblock %}
 
@@ -12,31 +12,247 @@
         <section class="resume-section">
             <h1>Candidate’s Resume</h1>
             <div class="resume-card">
-                <img src="{{ url_for('static', filename='resumes/resume_example.png') }}" alt="Resume Preview">
+                <iframe src="{{ url_for('static', filename= candidate.filepath) }}#view=FitH" width="100%" height="500px"></iframe>
             </div>
         </section>
 
         <section class="result-section">
             <h1>Results Explanation</h1>
             <div class="result-box">
-                <p><strong>Name : </strong> {{ candidate.name }} 
+                <p style="margin-bottom: 0;"><strong>Name : </strong> {{ candidate.name }} 
                     <span class="score"><strong>| Score: {{ candidate.score }}%</strong></span>
                 </p>
-                <p><strong>Designation : </strong> {{ candidate.designation }}</p>
+                <p><strong>Email : </strong> {{ candidate.email }}</p>
+                <strong>System Recommendation : </strong>
+                <p style="margin-bottom: 0;">{{ candidate.recommendation }}</p>
                 <hr>
-                <p><strong>XAI Results:</strong></p>
-                <ul>
-                    {% for result in candidate.xai_results %}
-                    <li>{{ result.desc }} (<strong>{{ result.score }}</strong>)</li>
-                    {% endfor %}
-                </ul>
+                <p style="margin-bottom: 0;"><strong>Explanation:</strong></p>
+                {{ candidate.summary }}
             </div>
 
             <div class="action-buttons">
-                <button class="reject">Reject</button>
-                <button class="accept">Accept</button>
+                <button class="status-button"  data-bs-toggle="modal" data-bs-target="#statusModal" data-application-id="{{ candidate.application_id }}">
+                    Set Candidate Status
+                </button>
             </div>
         </section>
     </div>
+    <div style="padding: 0 20px;">
+        <h1>Resume Information</h1>
+        <div class="result-box">
+            <p style="margin-bottom: 8px;">
+                <strong>Experience :</strong>
+            </p>
+            {%if not candidate.experience%}
+            <div class="bg-container">
+                <h2 class="w-100 text-center m-0 text-white">
+                    No Data
+                </h2>
+            </div>
+            {%else%}
+            <div class="tag-container">
+                {% for exp in candidate.experience %}
+                <div class="tag">
+                    <p style="margin-bottom: 0px;">
+                        {{ exp['designation'] }} ({{exp['exp_range']}})
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+            {%endif%}
+            
+            <p style="margin-bottom: 8px;">
+                <strong>Education / Certificate :</strong>
+            </p>
+            {%if not candidate.education%}
+            <div class="bg-container">
+                <h2 class="w-100 text-center m-0 text-white">
+                    No Data
+                </h2>
+            </div>
+            {%else%}
+            <div class="tag-container">
+                {% for deg in candidate.education %}
+                <div class="tag">{{ deg }}</div>
+                {% endfor %}
+            </div>
+            {%endif%}
+
+            <p style="margin-bottom: 8px;">
+                <strong>College :</strong>
+            </p>
+            {%if not candidate.college%}
+            <div class="bg-container">
+                <h2 class="w-100 text-center m-0 text-white">
+                    No Data
+                </h2>
+            </div>
+            {%else%}
+            <div class="tag-container">
+                {% for col in candidate.college %}
+                <div class="tag">{{ col }}</div>
+                {% endfor %}
+            </div>
+            {%endif%}
+
+            <p style="margin-bottom: 8px;">
+                <strong>Graduation Year :</strong>
+            </p>
+            {%if not candidate.graduation%}
+            <div class="bg-container">
+                <h2 class="w-100 text-center m-0 text-white">
+                    No Data
+                </h2>
+            </div>
+            {%else%}
+            <div class="tag-container">
+                {% for col in candidate.graduation %}
+                <div class="tag">{{ col }}</div>
+                {% endfor %}
+            </div>
+            {%endif%}
+
+            <p style="margin-bottom: 8px;">
+                <strong>Skills :</strong>
+            </p>
+            {%if not candidate.skills%}
+            <div class="bg-container">
+                <h2 class="w-100 text-center m-0 text-white">
+                    No Data
+                </h2>
+            </div>
+            {%else%}
+            <div class="tag-container" id="skill-tag-list">
+                {% for skill in candidate.skills %}
+                <div class="tag">{{ skill }}</div>
+                {% endfor %}
+            </div>
+            {%endif%}
+
+            <p style="margin-bottom: 8px;">
+                <strong>Soft Skills :</strong>
+            </p>
+            {%if not candidate.softskills%}
+            <div class="bg-container">
+                <h2 class="w-100 text-center m-0 text-white">
+                    No Data
+                </h2>
+            </div>
+            {%else%}
+            <div class="tag-container">
+                {% for softskill in candidate.softskills %}
+                <div class="tag">{{ softskill }}</div>
+                {% endfor %}
+            </div>
+            {%endif%}
+
+            <p style="margin-bottom: 8px;">
+                <strong>Companies worked at :</strong>
+            </p>
+            {%if not candidate.companies%}
+            <div class="bg-container">
+                <h2 class="w-100 text-center m-0 text-white">
+                    No Data
+                </h2>
+            </div>
+            {%else%}
+            <div class="tag-container">
+                {% for comp in candidate.companies %}
+                <div class="tag">{{ comp }}</div>
+                {% endfor %}
+            </div>
+            {%endif%}
+            
+            <p style="margin-bottom: 8px;">
+                <strong>Supporting Files :</strong>
+            </p>
+            {%if not candidate.gdrive%}
+            <div class="bg-container">
+                <h2 class="w-100 text-center m-0 text-white">
+                    No Data
+                </h2>
+            </div>
+            {%else%}
+            <div class="tag-container">
+                <div class="tag">
+                    <a href="{{ candidate.gdrive }}" target="_blank">{{ candidate.gdrive }}</a>
+                </div>
+            </div>
+            {%endif%}
+        </div>
+    </div>
 </main>
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #001f4d;">
+        <h3 class="modal-title w-100 text-center m-0" id="deleteModalLabel" style="color: white;">Set Candidate Status</h3>
+        <button type="button" class="btn-close white-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="background-color: #f0f0f0;">
+        <p style="margin: 0;font-size: 20px;font-weight: 500">Approve this candidate to move to the next stage?</p>
+      </div>
+      <div class="modal-footer justify-content-between" style="background-color: #f0f0f0;">
+        <button id="confirmRejectBtn" type="button" class="btn btn-danger" data-bs-dismiss="modal">No, Reject</button>
+        <button id="confirmProceedBtn" type="button" class="btn btn-success">Yes, Proceed</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js%}
+<script>
+    let applicationId = null;
+
+    var statusModal = document.getElementById("statusModal");
+
+    statusModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        applicationId = button.getAttribute('data-application-id');
+    });
+
+    function updateApplicationStatus(status){
+        if (!applicationId) return;
+
+        fetch(`/update-status/${applicationId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status }),
+            credentials: 'include'
+        })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401) {
+                    alert('Unauthorized: Only Recruiter can update status.');
+                } else if (response.status === 404) {
+                    alert('Application not found. ');
+                } else {
+                    alert('Failed to Update status.');
+                }
+                throw new Error('Update failed');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                alert('Error' + data.error)
+            } else {
+                window.location.href = document.referrer
+            }
+        })
+        .catch(error => console.error(error));
+    }
+
+    document.getElementById("confirmProceedBtn").addEventListener('click', function  (event) {
+        updateApplicationStatus("Proceed")
+    })
+
+    document.getElementById("confirmRejectBtn").addEventListener('click', function  (event) {
+        updateApplicationStatus("Rejected")
+    })
+
+</script>
 {% endblock %}

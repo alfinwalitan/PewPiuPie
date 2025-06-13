@@ -1,4 +1,5 @@
 import re
+import json
 from datetime import datetime
 from dateutil import parser
 from word2number import w2n
@@ -179,3 +180,25 @@ def skills_str_to_comma(text):
 def datetime_to_str(date):
     formatted = date.strftime("%d %B %Y")
     return formatted
+
+def load_json(data):
+    return json.loads(data)
+
+def create_unique_list(list):
+    seen = set()
+    unique_list= []
+    for item in list:
+        key = item.lower()
+        if key not in seen:
+            seen.add(key)
+            unique_list.append(item)
+    return unique_list
+
+def format_explanation(explanation):
+    html_content = f"<p>{explanation.replace('**', '<b>')}</p>"
+    html_content = html_content.replace('/*', '</b>')
+    html_content = html_content.replace('##', '<i>')
+    html_content = html_content.replace('/#', '</i>')
+    html_content = html_content.replace('%%', '<i>')
+    html_content = html_content.replace('/%', '</i>')
+    return html_content

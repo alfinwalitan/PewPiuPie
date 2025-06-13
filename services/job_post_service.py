@@ -46,3 +46,29 @@ def get_active_jobs():
     jobs = cur.fetchall()
     cur.close()
     return jobs
+
+def get_job_applications(job_id):
+    try:
+        connection = get_connection()
+        cur = connection.cursor()
+        cur.execute(
+            "SELECT * FROM application WHERE jobpost_id = %s", (job_id,)
+        )
+        applications = cur.fetchall()
+        cur.close()
+        return True, applications
+    except Exception as e:
+        return False, str(e)
+    
+def get_application(app_id):
+    try:
+        connection = get_connection()
+        cur = connection.cursor()
+        cur.execute(
+            "SELECT * FROM application WHERE id = %s", (app_id,)
+        )
+        application = cur.fetchone()
+        cur.close()
+        return True, application
+    except Exception as e:
+        return False, str(e)

@@ -1,9 +1,9 @@
 import os
 import uuid
-from utils import skills_str_to_list
+from utils import skills_str_to_list, format_explanation, load_json, create_unique_list
 from machine_learning import run_system
-from services.job_post_service import get_job_post
-from services.resume_service import insert_resume, insert_application, insert_xai, check_drive_link
+from services.job_post_service import get_job_post, get_application
+from services.resume_service import insert_resume, insert_application, check_drive_link, get_resume, update_application
 from flask import Blueprint, request, redirect, url_for, flash, session, render_template, current_app, jsonify
 from werkzeug.utils import secure_filename
 
@@ -16,6 +16,9 @@ def allowed_file(filename):
 # UPLOAD RESUME
 @resume_bp.route("/job-detail/<int:job_id>/upload-resume", methods=['GET', 'POST'])
 def upload_resume(job_id):
+    if 'user_id' not in session or session.get('user_role') != 'candidate':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
     job = get_job_post(job_id)
 
     job_desc = {
@@ -53,7 +56,7 @@ def upload_resume(job_id):
             filename = secure_filename(file.filename)
             ext = os.path.splitext(filename)[1]
             unique_filename = f"{uuid.uuid4().hex}{ext}"
-            filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+            filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename).replace("\\", "/")
             file.save(filepath)
 
             # Analyze Resume
@@ -80,19 +83,12 @@ def upload_resume(job_id):
                     user_id=user_id,
                     gdrive=link,
                     score=result['Score'],
-                    recommendation=result['Resume Classification']
+                    recommendation=result['Resume Classification'],
+                    explanation=result['Summary']
                 )
 
                 if not application_success:
                     return jsonify({'error': application_result}), 500
-                
-                xai_success, xai_error = insert_xai(
-                    application_id=application_result,
-                    explanation=result['Summary']
-                )
-
-                if not xai_success:
-                    return jsonify({'error': xai_error}), 500
 
                 flash(f'File "{filename}" uploaded successfully!', 'success')
                 return redirect(url_for('dashboard.dashboard'))
@@ -109,20 +105,50 @@ def upload_resume(job_id):
     )
 
 # VIEW RESUME
-@resume_bp.route("/resume")
-def view_resume():
+@resume_bp.route("/resume/<int:application_id>")
+def view_resume(application_id):
+    if 'user_id' not in session or session.get('user_role') != 'recruiter':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    candidate = {}
+    application_success, application = get_application(application_id)
+    if application_success:
+        candidate['application_id'] = application_id
+        candidate['score'] = application['score']
+        candidate['recommendation'] = application['recommendation']
+        candidate['summary'] = format_explanation(application['explanation'])
+        candidate['gdrive'] = application['gdrive']
 
-    # DUMMY DATA FOR VIEW RESUME
-    candidate = {
-        "name": "John Doe",
-        "score": 76.1,
-        "designation": "System Engineer",
-        "xai_results": [
-            {"desc": "Experience on React", "score": "+2.3"},
-            {"desc": "AWS Certification", "score": "+1.8"},
-            {"desc": "No Portfolio", "score": "-1.2"}
-        ]
-    }
+        res_id = application['resume_id']
+        resume_success, res = get_resume(res_id)
+    
+        if resume_success:
+            years_exp = load_json(res['years_exp'])
+            res_designation = load_json(res['designation'])
+            combined = [d for d in years_exp if d.get('designation')]
+            combined += [{'exp_range': "-", 'designation': des} for des in res_designation]
+
+            seen = set()
+            unique_exp = []
+            for item in combined:
+                key = item['designation'].lower()  # case-insensitive check
+                if key not in seen:
+                    seen.add(key)
+                    unique_exp.append(item)
+
+            skills = load_json(res['jobskills']) + load_json(res['techtools'])
+
+            candidate['name'] = res['name_res']
+            candidate['email'] = res['email_res']
+            candidate['filepath'] = res['file_path'].replace('static/', "")
+            candidate['skills'] = create_unique_list(skills)
+            candidate['softskills'] = create_unique_list(load_json(res['softskill']))
+            candidate['education'] = load_json(res['degree'])
+            candidate['experience'] = unique_exp
+            candidate['companies'] = load_json(res['companies'])
+            candidate['college'] = load_json(res['college'])
+            candidate['graduation'] = load_json(res['graduation'])
+
     return render_template(
     "view_resume.jinja",
     user_name=session.get('user_name'),
@@ -130,3 +156,22 @@ def view_resume():
     user_role=session.get('user_role'),
     candidate=candidate,
 )
+
+# UPDATE STATUS
+@resume_bp.route("/update-status/<int:application_id>", methods=['POST'])
+def update_status(application_id):
+    if 'user_id' not in session or session.get('user_role') != 'recruiter':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    
+    new_status = request.json.get('status')
+    if new_status not in ['Rejected', 'In Progress', 'Proceed']:
+        return jsonify({'error': 'Invalid status'}), 400
+    
+    success, message = update_application(application_id, new_status)
+    print(message)
+    if not success:
+        return jsonify({'error': message}), 404
+
+    flash(message, 'success')
+    return jsonify({'message': message}), 200

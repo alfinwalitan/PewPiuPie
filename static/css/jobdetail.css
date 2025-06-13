@@ -118,7 +118,7 @@ td em {
     background-color: #c0392b;
 }
 
-.skill-container{
+.bg-container{
     display: flex;
     gap: 16px;
     position: relative;
@@ -145,4 +145,46 @@ td em {
     display: flex;
     align-items: center;
     font-size: 14px;
+}
+
+.limited-td {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  max-height: 4.5em;
+  line-height: 1.5em;
+  position: relative;
+}
+
+.unstyled-list {
+  list-style-type: disc; /* keep dots */
+  padding-left: 1.2em;
+  margin: 0;
+}
+
+.flash-messages {
+  position: fixed;
+  top: 70px;
+  right: 10px;
+  z-index: 1000;
+}
+
+.flash-message {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  font-weight: 600;
+}
+
+.flash-message.error {
+  background-color: #f44336;
+}
+
+.flash-message.warning {
+  background-color: #ff9800;
 }

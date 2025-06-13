@@ -1,6 +1,20 @@
 from models.db_init import get_connection
 import requests
 import json
+
+def get_resume(res_id):
+    try:
+        connection = get_connection()
+        cur = connection.cursor()
+
+        cur.execute(
+            "SELECT * FROM resume_information WHERE id = %s", (res_id,)
+        )
+        res = cur.fetchone()
+        cur.close()
+        return True, res
+    except Exception as e:
+        return False, str(e)
     
 def insert_resume(res_info, filepath, user_id, name, email):
     try:
@@ -33,13 +47,13 @@ def insert_resume(res_info, filepath, user_id, name, email):
     except Exception as e:
         return False, str(e)
 
-def insert_application(res_id, job_id, user_id, gdrive, score, recommendation):
+def insert_application(res_id, job_id, user_id, gdrive, score, recommendation, explanation):
     try:
         connection = get_connection()
         cur = connection.cursor()
 
         cur.execute(
-            "INSERT INTO application (resume_id, jobpost_id, candidate_id, gdrive, score, recommendation, status) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            "INSERT INTO application (resume_id, jobpost_id, candidate_id, gdrive, score, recommendation, explanation, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
             (
                 res_id,
                 job_id,
@@ -47,6 +61,7 @@ def insert_application(res_id, job_id, user_id, gdrive, score, recommendation):
                 gdrive,
                 score,
                 recommendation,
+                explanation,
                 "In Progress"
             )
         )
@@ -57,18 +72,17 @@ def insert_application(res_id, job_id, user_id, gdrive, score, recommendation):
     except Exception as e:
         return False, str(e)
     
-def insert_xai(application_id, explanation):
+def get_xai(application_id):
     try:
         connection = get_connection()
         cur = connection.cursor()
 
         cur.execute(
-            "INSERT INTO xai (application_id, explanation) VALUES (%s, %s)",
-            (application_id, explanation)
+            "SELECT * FROM xai WHERE application_id = %s", (application_id,)
         )
-        connection.commit()
+        application = cur.fetchone()
         cur.close()
-        return True, None
+        return True, application
     except Exception as e:
         return False, str(e)
     
@@ -87,3 +101,21 @@ def check_drive_link(url):
         return True, "Accessible"
     except requests.RequestException as e:
         return False, f"Error: {str(e)}"
+    
+def update_application(application_id, new_status):
+    try:
+        connection = get_connection()
+        cur = connection.cursor()
+
+        cur.execute("SELECT id FROM application WHERE id = %s", (application_id,))
+        if cur.fetchone() is None:
+            return False, "Application not found"
+        
+        cur.execute(
+            "UPDATE application SET status = %s WHERE id = %s", (new_status, application_id)
+        )
+        connection.commit()
+        cur.close()
+        return True, f"Status Updated: {new_status}"
+    except Exception as e:
+        return False, str(e)
