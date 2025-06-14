@@ -169,8 +169,8 @@ def insert_job_post():
                 'Detail Oriented;; data sharing;; VMware Horizon View 5.x, 6.x, and 7.x;; Microsoft Hyper-V;; Ticket Resolution;; IT consultation;; Mac;; Customer Service;; Project Management;; Windows;; Middleware Integration;; Software Documentation;; Creativity;; project planning;; budgeting;; design',
                 'New York, NY',
                 '2025-12-31',
-                'TRUE'
-            );"""
+                %s
+            );""", (True,)
         )
         connection.commit()
         print("✅ Job Post created successfully.")
