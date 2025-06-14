@@ -188,3 +188,10 @@ td em {
 .flash-message.warning {
   background-color: #ff9800;
 }
+
+.btn-disable {
+    pointer-events: none;
+    background-color: gray;
+    border-color: gray;
+    cursor: default;
+}

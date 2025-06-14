@@ -1,6 +1,6 @@
 import re
 import json
-from datetime import datetime
+from datetime import datetime, date
 from dateutil import parser
 from word2number import w2n
 
@@ -202,3 +202,6 @@ def format_explanation(explanation):
     html_content = html_content.replace('%%', '<i>')
     html_content = html_content.replace('/%', '</i>')
     return html_content
+
+def is_expired(deadline):
+    return deadline< date.today()

@@ -48,7 +48,7 @@ def insert_resume(res_info, filepath, filename, user_id, name, email):
     except Exception as e:
         return False, str(e)
 
-def insert_application(res_id, job_id, user_id, gdrive, score, recommendation, explanation):
+def insert_application(res_id, job_id, user_id, gdrive, score, recommendation, explanation, status):
     try:
         connection = get_connection()
         cur = connection.cursor()
@@ -63,7 +63,7 @@ def insert_application(res_id, job_id, user_id, gdrive, score, recommendation, e
                 score,
                 recommendation,
                 explanation,
-                "In Progress"
+                status
             )
         )
         app_id = cur.lastrowid

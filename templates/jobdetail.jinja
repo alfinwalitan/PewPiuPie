@@ -45,7 +45,7 @@
         </div>
     </div>
     <p><strong>Location : </strong> {{ job.location }}</p>
-    <p><strong>Application Deadline : </strong> {{ job.deadline }}</p>
+    <p class="{% if job.is_expired %} text-expired {% endif %}"><strong style="color: white;">Deadline : </strong> {{ job.deadline }}</p>
 </div>
 
 {% if user_role == "recruiter" %}
@@ -114,16 +114,23 @@
 </div>
 {%else%}
 <div class="center-container">
-    <a href="{{ url_for('resume.upload_resume', job_id=job.id) }}" class="btn btn-primary upload-btn">Upload Resume</a>
+    <a id="uploadBtn" href="{{ url_for('resume.upload_resume', job_id=job.id) }}" class="btn btn-primary upload-btn {% if job.is_expired %} btn-disable {% endif %}">Upload Resume</a>
 </div>
 {%endif%}
 {% endblock %}
 
 {% block extra_js%}
 <script>
+const is_expired = "{{job.is_expired}}"
 let jobIdToDelete = null;
 
 var deleteModal = document.getElementById('deleteModal');
+const link = document.getElementById("uploadBtn");
+
+if (is_expired.toLowerCase() === "true") {
+  link.removeAttribute("href");
+  link.setAttribute("title", "This job has expired");
+}
 
 deleteModal.addEventListener('show.bs.modal', function (event) {
   const button = event.relatedTarget;

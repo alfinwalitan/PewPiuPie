@@ -17,7 +17,7 @@ def allowed_file(filename):
 @resume_bp.route("/job-detail/<int:job_id>/upload-resume", methods=['GET', 'POST'])
 def upload_resume(job_id):
     if 'user_id' not in session or session.get('user_role') != 'candidate':
-        return jsonify({'error': 'Unauthorized'}), 401
+        return redirect(url_for('auth.signin'))
     
     job = get_job_post(job_id)
 
@@ -78,6 +78,10 @@ def upload_resume(job_id):
                 if not resume_success:
                     return jsonify({'error': res_id}), 500
                 
+                status = "In Progress"
+                if result['Resume Classification'] == "Not Suitable":
+                    status = "Rejected"
+                
                 application_success, application_result = insert_application(
                     res_id=res_id,
                     job_id=job_id,
@@ -85,13 +89,17 @@ def upload_resume(job_id):
                     gdrive=link,
                     score=result['Score'],
                     recommendation=result['Resume Classification'],
-                    explanation=result['Summary']
+                    explanation=result['Summary'],
+                    status=status
                 )
 
                 if not application_success:
                     return jsonify({'error': application_result}), 500
 
                 flash(f'File "{filename}" uploaded successfully!', 'success')
+                return redirect(url_for('dashboard.dashboard'))
+            else:
+                flash("Internal Server Error", 'error')
                 return redirect(url_for('dashboard.dashboard'))
         else:
             flash('File type not allowed', 'error')
@@ -109,7 +117,7 @@ def upload_resume(job_id):
 @resume_bp.route("/resume/<int:application_id>")
 def view_resume(application_id):
     if 'user_id' not in session or session.get('user_role') != 'recruiter':
-        return jsonify({'error': 'Unauthorized'}), 401
+        return redirect(url_for('auth.signin'))
     
     candidate = {}
     application_success, application = get_application(application_id)
@@ -162,8 +170,7 @@ def view_resume(application_id):
 @resume_bp.route("/update-status/<int:application_id>", methods=['POST'])
 def update_status(application_id):
     if 'user_id' not in session or session.get('user_role') != 'recruiter':
-        return jsonify({'error': 'Unauthorized'}), 401
-    
+        return redirect(url_for('auth.signin'))
     
     new_status = request.json.get('status')
     if new_status not in ['Rejected', 'In Progress', 'Proceed']:

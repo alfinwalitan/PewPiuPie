@@ -1,7 +1,7 @@
 from services.job_post_service import get_job_post, insert_job_post, delete_job_by_id, get_job_applications
 from services.resume_service import get_resume
 from flask import Blueprint, render_template, request, session, redirect, url_for, jsonify, flash
-from utils import skills_str_to_list, datetime_to_str, load_json, create_unique_list
+from utils import skills_str_to_list, datetime_to_str, load_json, is_expired
 
 jobs_bp = Blueprint('jobs', __name__)
 
@@ -44,6 +44,7 @@ def job_detail(job_id):
         return "Job not found", 404
 
     job['skills'] = skills_str_to_list(job['skills'])
+    job['is_expired'] = is_expired(job['deadline'])
     job['deadline'] = datetime_to_str(job['deadline'])
 
     role = session.get('user_role')
@@ -72,7 +73,7 @@ def job_detail(job_id):
 @jobs_bp.route('/delete-job/<int:job_id>', methods=['DELETE'])
 def delete_job(job_id):
     if 'user_id' not in session or session.get('user_role') != 'recruiter':
-        return jsonify({'error': 'Unauthorized'}), 401
+        return redirect(url_for('auth.signin'))
 
     success, message = delete_job_by_id(job_id)
     if not success:
