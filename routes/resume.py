@@ -79,8 +79,9 @@ def upload_resume(job_id):
                     return jsonify({'error': res_id}), 500
                 
                 status = "In Progress"
-                if result['Resume Classification'] == "Not Suitable":
-                    status = "Rejected"
+                if job['is_auto_reject']:
+                    if result['Resume Classification'] == "Not Suitable":
+                        status = "Rejected"
                 
                 application_success, application_result = insert_application(
                     res_id=res_id,

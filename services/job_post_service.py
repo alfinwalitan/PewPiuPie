@@ -10,14 +10,14 @@ def get_job_post(job_id):
 
     return job
 
-def insert_job_post(job_title, experience, education, skills, location, deadline, user_id):
+def insert_job_post(job_title, experience, education, skills, location, deadline, is_auto_reject, user_id):
     try:
         connection = get_connection()
         cur = connection.cursor()
         cur.execute("""
-            INSERT INTO job_post (job_title, experience, education, skills, location, deadline, user_id)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (job_title, experience, education, skills, location, deadline, user_id))
+            INSERT INTO job_post (job_title, experience, education, skills, location, deadline, is_auto_reject, user_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """, (job_title, experience, education, skills, location, deadline, is_auto_reject, user_id))
         connection.commit()
         cur.close()
         return True, "Job Post Created Successfully"

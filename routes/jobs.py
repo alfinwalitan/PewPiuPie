@@ -19,8 +19,10 @@ def post_job():
         location = request.form['location']
         deadline = request.form['deadline']
         user_id = session['user_id']
+        auto_reject = True if request.form['autoReject'] == "TRUE" else False
+        print(auto_reject)
 
-        success, message = insert_job_post(job_title, experience, education, skills, location, deadline, user_id)
+        success, message = insert_job_post(job_title, experience, education, skills, location, deadline, auto_reject, user_id)
         if success:
             flash(message, "success")
             return redirect(url_for('dashboard.dashboard'))

@@ -77,6 +77,7 @@ def create_table():
             skills TEXT NOT NULL,
             location VARCHAR(255) NOT NULL,
             deadline DATE NOT NULL,
+            is_auto_reject BOOLEAN DEFAULT FALSE,
             posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
         )
@@ -158,7 +159,8 @@ def insert_job_post():
                 education,
                 skills,
                 location,
-                deadline
+                deadline,
+                is_auto_reject
             ) VALUES (
                 1,
                 'Software Engineer',
@@ -166,7 +168,8 @@ def insert_job_post():
                 'Bachelor of Computer Science',
                 'Detail Oriented;; data sharing;; VMware Horizon View 5.x, 6.x, and 7.x;; Microsoft Hyper-V;; Ticket Resolution;; IT consultation;; Mac;; Customer Service;; Project Management;; Windows;; Middleware Integration;; Software Documentation;; Creativity;; project planning;; budgeting;; design',
                 'New York, NY',
-                '2025-12-31'
+                '2025-12-31',
+                'TRUE'
             );"""
         )
         connection.commit()
