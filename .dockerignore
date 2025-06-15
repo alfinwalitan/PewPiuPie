@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pdf
+*.log
+.env
+static/resumes/

@@ -2,9 +2,9 @@ import os
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "your_secret_key")
 
-MYSQL_HOST = "localhost"
+MYSQL_HOST = "db"
 MYSQL_USER = "root"
-MYSQL_PASSWORD = ""
+MYSQL_PASSWORD = "resume123"
 MYSQL_DB = "resume_app"
 
 RECRUITER_NAME = "Recruiter"
