@@ -98,8 +98,7 @@ def create_table():
             application_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (resume_id) REFERENCES resume(id) ON DELETE CASCADE,
             FOREIGN KEY (jobpost_id) REFERENCES job_post(id) ON DELETE CASCADE,
-            FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
-            CONSTRAINT unique_application_per_user_per_job UNIQUE (user_id, jobpost_id)
+            FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
         )
     """)
 

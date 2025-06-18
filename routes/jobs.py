@@ -44,9 +44,9 @@ def job_detail(job_id):
     if not job:
         return "Job not found", 404
     
-    apply_success, applied = already_applied(session.get('user_id'), job_id)
+    apply_success, can_apply = already_applied(session.get('user_id'), job_id)
     if apply_success:
-        job['can_apply'] = applied
+        job['can_apply'] = can_apply
     else:
         return "Internal Server Error", 500
 
