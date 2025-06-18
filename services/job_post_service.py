@@ -10,6 +10,21 @@ def get_job_post(job_id):
 
     return job
 
+def already_applied(user_id, jobpost_id):
+    try:
+        connection = get_connection()
+        cur = connection.cursor()
+
+        cur.execute(
+            "SELECT id FROM application WHERE user_id = %s AND jobpost_id = %s AND status != 'Rejected';", (user_id, jobpost_id)
+        )
+
+        can_apply = cur.fetchone()
+        cur.close()
+        return True, can_apply is None
+    except Exception as e:
+        return False, str(e)
+
 def insert_job_post(job_title, experience, education, skills, location, deadline, is_auto_reject, user_id):
     try:
         connection = get_connection()

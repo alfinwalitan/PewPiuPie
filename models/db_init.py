@@ -45,9 +45,9 @@ def create_table():
 
     # Resume Information
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS resume_information (
+        CREATE TABLE IF NOT EXISTS resume (
             id INT PRIMARY KEY AUTO_INCREMENT,
-            candidate_id INT,
+            user_id INT,
             file_path VARCHAR(255),
             filename VARCHAR(100),
             name_res VARCHAR(100),
@@ -62,7 +62,7 @@ def create_table():
             college TEXT,
             graduation TEXT,
             degree TEXT,
-            FOREIGN KEY (candidate_id) REFERENCES user(id) ON DELETE CASCADE
+            FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
         )
     """)
 
@@ -89,16 +89,17 @@ def create_table():
             id INT PRIMARY KEY AUTO_INCREMENT,
             resume_id INT,
             jobpost_id INT,
-            candidate_id INT,
+            user_id INT,
             gdrive TEXT,
-            status ENUM('Rejected', 'In Progress', 'Proceed'),
+            status ENUM('Rejected', 'In Progress', 'Proceed') DEFAULT 'In Progress',
             score FLOAT,
             recommendation ENUM('Highly Suitable', 'Moderately Suitable', 'Not Suitable'),
             explanation TEXT,
             application_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (resume_id) REFERENCES resume_information(id) ON DELETE CASCADE,
+            FOREIGN KEY (resume_id) REFERENCES resume(id) ON DELETE CASCADE,
             FOREIGN KEY (jobpost_id) REFERENCES job_post(id) ON DELETE CASCADE,
-            FOREIGN KEY (candidate_id) REFERENCES user(id) ON DELETE CASCADE
+            FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+            CONSTRAINT unique_application_per_user_per_job UNIQUE (user_id, jobpost_id)
         )
     """)
 

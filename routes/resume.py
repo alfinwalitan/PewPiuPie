@@ -2,7 +2,7 @@ import os
 import uuid
 from utils import skills_str_to_list, format_explanation, load_json, create_unique_list
 from machine_learning import run_system
-from services.job_post_service import get_job_post, get_application
+from services.job_post_service import get_job_post, get_application, already_applied
 from services.resume_service import insert_resume, insert_application, check_drive_link, get_resume, update_application
 from flask import Blueprint, request, redirect, url_for, flash, session, render_template, current_app, jsonify
 from werkzeug.utils import secure_filename
@@ -19,6 +19,7 @@ def upload_resume(job_id):
     if 'user_id' not in session or session.get('user_role') != 'candidate':
         return redirect(url_for('auth.signin'))
     
+
     job = get_job_post(job_id)
 
     job_desc = {
@@ -31,6 +32,11 @@ def upload_resume(job_id):
     if 'user_id' not in session:
         return redirect(url_for('auth.signin'))
     user_id = session['user_id']
+
+    success_apply, can_apply = already_applied(user_id, job_id)
+    if success_apply:
+        if not can_apply:
+            return redirect(url_for('dashboard.dashboard'))
 
     if request.method == 'POST':
         file = request.files.get('resumeUpload')

@@ -1,4 +1,4 @@
-from services.job_post_service import get_job_post, insert_job_post, delete_job_by_id, get_job_applications
+from services.job_post_service import get_job_post, insert_job_post, delete_job_by_id, get_job_applications, already_applied
 from services.resume_service import get_resume
 from flask import Blueprint, render_template, request, session, redirect, url_for, jsonify, flash
 from utils import skills_str_to_list, datetime_to_str, load_json, is_expired
@@ -20,7 +20,6 @@ def post_job():
         deadline = request.form['deadline']
         user_id = session['user_id']
         auto_reject = True if request.form['autoReject'] == "TRUE" else False
-        print(auto_reject)
 
         success, message = insert_job_post(job_title, experience, education, skills, location, deadline, auto_reject, user_id)
         if success:
@@ -44,6 +43,12 @@ def job_detail(job_id):
 
     if not job:
         return "Job not found", 404
+    
+    apply_success, applied = already_applied(session.get('user_id'), job_id)
+    if apply_success:
+        job['can_apply'] = applied
+    else:
+        return "Internal Server Error", 500
 
     job['skills'] = skills_str_to_list(job['skills'])
     job['is_expired'] = is_expired(job['deadline'])

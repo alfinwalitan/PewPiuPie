@@ -190,8 +190,12 @@ td em {
 }
 
 .btn-disable {
-    pointer-events: none;
     background-color: gray;
     border-color: gray;
     cursor: default;
+}
+
+.btn-disable:hover {
+    background-color: darkgray;
+    border-color: darkgray;
 }

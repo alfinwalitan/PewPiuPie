@@ -8,7 +8,7 @@ def get_resume(res_id):
         cur = connection.cursor()
 
         cur.execute(
-            "SELECT * FROM resume_information WHERE id = %s", (res_id,)
+            "SELECT * FROM resume WHERE id = %s", (res_id,)
         )
         res = cur.fetchone()
         cur.close()
@@ -22,7 +22,7 @@ def insert_resume(res_info, filepath, filename, user_id, name, email):
         cur = connection.cursor()
 
         cur.execute(
-            "INSERT INTO resume_information (candidate_id, file_path, filename, name_res, designation, companies, location, email_res, techtools, jobskills, years_exp, softskill, college, graduation, degree) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            "INSERT INTO resume (user_id, file_path, filename, name_res, designation, companies, location, email_res, techtools, jobskills, years_exp, softskill, college, graduation, degree) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
             (
                 user_id,
                 filepath,
@@ -54,7 +54,7 @@ def insert_application(res_id, job_id, user_id, gdrive, score, recommendation, e
         cur = connection.cursor()
 
         cur.execute(
-            "INSERT INTO application (resume_id, jobpost_id, candidate_id, gdrive, score, recommendation, explanation, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+            "INSERT INTO application (resume_id, jobpost_id, user_id, gdrive, score, recommendation, explanation, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
             (
                 res_id,
                 job_id,

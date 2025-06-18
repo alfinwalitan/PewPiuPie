@@ -28,10 +28,10 @@ def get_user_applications(user_id):
         connection = get_connection()
         cur = connection.cursor()
         cur.execute("""
-                    SELECT application.status, application.application_date, resume_information.file_path, resume_information.filename, job_post.job_title FROM application 
-                    JOIN resume_information ON application.resume_id = resume_information.id
+                    SELECT application.status, application.application_date, resume.file_path, resume.filename, job_post.job_title FROM application 
+                    JOIN resume ON application.resume_id = resume.id
                     JOIN job_post ON application.jobpost_id = job_post.id
-                    WHERE application.candidate_id = %s
+                    WHERE application.user_id = %s
         """, (user_id,)
         )
         applications = cur.fetchall()
