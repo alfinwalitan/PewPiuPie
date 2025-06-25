@@ -8,7 +8,7 @@ def load_rf_model():
     global rf_model
     if rf_model is None:
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        rf_model_path = os.path.join(BASE_DIR, "models", "random_forest", "random_forest_model_96.pkl")
+        rf_model_path = os.path.join(BASE_DIR, "models", "random_forest", "random_forest_model_96_new.pkl")
         rf_model = joblib.load(rf_model_path)
     return rf_model
 

@@ -3,7 +3,7 @@ from sentence_transformers import SentenceTransformer, util
 from utils import *
 
 # Load a pre-trained model
-similarity_model = SentenceTransformer('all-MiniLM-L6-v2')
+similarity_model = SentenceTransformer('stsb-roberta-base-v2')
 
 def calculate_similarity(job_desc, res):
     if job_desc and res:
