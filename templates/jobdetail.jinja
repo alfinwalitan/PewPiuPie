@@ -123,19 +123,22 @@
 <script>
 const is_expired = "{{job.is_expired}}"
 const can_apply = "{{job.can_apply}}"
+const user_role = "{{user_role}}"
 let jobIdToDelete = null;
 
 var deleteModal = document.getElementById('deleteModal');
 const link = document.getElementById("uploadBtn");
 
-if (is_expired.toLowerCase() === "true") {
-  link.removeAttribute("href");
-  link.setAttribute("title", "This job has expired");
-}
-
-if (can_apply.toLocaleLowerCase() === "false") {
-  link.removeAttribute("href");
-  link.setAttribute("title", "User Already Applied")
+if (user_role === "candidate"){
+  if (is_expired.toLowerCase() === "true") {
+    link.removeAttribute("href");
+    link.setAttribute("title", "This job has expired");
+  }
+  
+  if (can_apply.toLocaleLowerCase() === "false") {
+    link.removeAttribute("href");
+    link.setAttribute("title", "User Already Applied")
+  }
 }
 
 deleteModal.addEventListener('show.bs.modal', function (event) {
